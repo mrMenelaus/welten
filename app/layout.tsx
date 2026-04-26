@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ModeToggle } from "@/components/theme/mode-toggle";
+import { SignOut } from "@/components/auth/signout";
+
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +33,38 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      suppressHydrationWarning
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        figtree.variable,
+      )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider attribute="class">
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="flex flex-col flex-1">
+              <nav>
+                <div className="container mx-auto p-4 flex gap-2 items-center">
+                  <SidebarTrigger />
+                  <div className="flex-1"/>
+                  <ModeToggle/>
+                  <SignOut />
+                </div>
+              </nav>
+              <Separator />
+              <main className="flex-1">
+                <div className="container mx-auto p-4">{children}</div>
+              </main>
+            </div>
+          </SidebarProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
