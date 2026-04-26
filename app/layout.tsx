@@ -7,7 +7,6 @@ import { AppSidebar } from "@/components/layout/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
-import { SignOut } from "@/components/auth/signout";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -54,7 +53,6 @@ export default function RootLayout({
                   <SidebarTrigger />
                   <div className="flex-1"/>
                   <ModeToggle/>
-                  <SignOut />
                 </div>
               </nav>
               <Separator />

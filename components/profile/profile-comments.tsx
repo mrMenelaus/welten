@@ -10,7 +10,7 @@ import {
 import { getPlayer } from "./get-player";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 
-import { PlayerComment, User } from "@/lib/generated/prisma/client";
+import { Player, PlayerComment } from "@/lib/generated/prisma/client";
 import { CommentForm } from "./comment-form";
 import { Animated } from "../layout/animated";
 import { CommentControls } from "./comment-controls";
@@ -20,7 +20,7 @@ export async function ProfileComments({ name }: { name: string }) {
   if (!player) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-sm">
       <div className="block text-2xl font-semibold">
         Комментарии ({player.playerComments.length})
       </div>
@@ -34,7 +34,7 @@ export async function ProfileComments({ name }: { name: string }) {
   );
 }
 
-function Comment({ comment }: { comment: PlayerComment & { author: User } }) {
+function Comment({ comment }: { comment: PlayerComment & { author: Player } }) {
   return (
     <Animated>
       <Item variant="outline">

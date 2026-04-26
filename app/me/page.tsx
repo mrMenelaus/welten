@@ -1,4 +1,3 @@
-import { Animated } from "@/components/layout/animated";
 import {
   Card,
   CardDescription,
@@ -6,24 +5,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Suspense } from "react";
-import { BannerWrapper } from "@/components/auth/banner-wrapper";
-import { WelcomeBanner } from "@/components/auth/welcome-banner";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { ProfileCard } from "@/components/profile/profile-card";
-import { prisma } from "@/lib/prisma";
-import { UnderDevelopment } from "@/components/layout/under-development";
+import jwt from "jsonwebtoken";
+
+
 
 export default function Me() {
   return (
     <div className="flex gap-4 flex-col">
-      <Animated>
-        <Suspense>
-          <BannerWrapper>
-            <WelcomeBanner />
-          </BannerWrapper>
-        </Suspense>
-      </Animated>
       <div className="flex-1 flex flex-col lg:flex-row gap-3">
         <div className="flex flex-col flex-1">
           <Card>
@@ -44,15 +34,10 @@ export default function Me() {
 }
 
 async function Profile() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+  const token = (await cookies()).get("token")?.value
+  if (!token) return null
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: { player: true },
-  });
-  if (!user?.player) {
-    return <UnderDevelopment />;
-  }
-  return <ProfileCard name={user.player.name} />;
+  const player = jwt.verify(token, process.env.JWT_SECRET!) as {name: string}
+
+  return <ProfileCard name={player.name} />;
 }

@@ -12,51 +12,18 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id             String          @id
-  name           String
-  email          String
-  player         Player?
-  playerComments PlayerComment[]
-
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-
-  @@unique([email])
-  @@map("user")
-}
-
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@index([userId])
-  @@map("session")
-}
-
 model Player {
   id String @id @default(cuid())
-
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String? @unique
 
   name    String @unique
   balance Int    @default(0)
   status  Status @default(OFFLINE)
 
-  playerComments PlayerComment[]
+  // :point_down: комментарии, где он "владелец"
+  playerComments PlayerComment[] @relation("PlayerComments")
+
+  // :point_down: комментарии, где он автор
+  authoredComments PlayerComment[] @relation("AuthorComments")
 
   skin Json
 }
@@ -64,50 +31,18 @@ model Player {
 model PlayerComment {
   id String @id @default(cuid())
 
-  player   Player @relation(fields: [playerId], references: [id])
+  // :point_down: к кому относится комментарий
+  player   Player @relation("PlayerComments", fields: [playerId], references: [id])
   playerId String
 
   content String
-
   createdAt DateTime @default(now())
 
-  author   User   @relation(fields: [authorId], references: [id])
+  // :point_down: кто написал
+  author   Player @relation("AuthorComments", fields: [authorId], references: [id])
   authorId String
 }
-
 enum Status {
   ONLINE
   OFFLINE
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
 }
