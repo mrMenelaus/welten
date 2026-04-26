@@ -5,11 +5,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import { ProfileCard } from "@/components/profile/profile-card";
-import jwt from "jsonwebtoken";
-
-
+import { getSession } from "@/lib/auth/get-session";
 
 export default function Me() {
   return (
@@ -34,10 +31,6 @@ export default function Me() {
 }
 
 async function Profile() {
-  const token = (await cookies()).get("token")?.value
-  if (!token) return null
-
-  const player = jwt.verify(token, process.env.JWT_SECRET!) as {name: string}
-
-  return <ProfileCard name={player.name} />;
+  const session = await getSession();
+  return session && <ProfileCard name={session.name} />;
 }
