@@ -15,7 +15,7 @@ export function PlayerStatus({
     const stream = new EventSource("/api/player");
     const handler = (message: MessageEvent) => {
       const data = JSON.parse(message.data);
-      setInfo({status: data.status, balance: data.status});
+      setInfo({status: data.status, balance: data.balance});
     };
 
     stream.addEventListener("message", handler);

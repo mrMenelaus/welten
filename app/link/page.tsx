@@ -50,7 +50,7 @@ export default async function LinkPage({ searchParams }: PageProps<"/link">) {
           </CardDescription>
           <CardAction>
             <form action={claimPlayer}>
-              <Button type="submit" size={"lg"}>
+              <Button type="submit" size={"icon-lg"}>
                 <FingerprintPattern />
               </Button>
             </form>
