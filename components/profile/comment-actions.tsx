@@ -27,3 +27,23 @@ export async function leaveComment(
   refresh();
   return "success";
 }
+
+export async function like(commentId: string) {
+  const session = await getSession();
+  if (!session) return "error";
+
+  const comment = await prisma.playerCommentLike.findFirst({
+    where: { playerCommentId: commentId, authorId: session.sub },
+  });
+
+  if (comment) {
+    await prisma.playerCommentLike.delete({ where: { id: comment.id } });
+  } else {
+    await prisma.playerCommentLike.create({
+      data: { playerCommentId: commentId, authorId: session.sub },
+    });
+  }
+
+  refresh();
+  return "success";
+}

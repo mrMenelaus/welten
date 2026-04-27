@@ -15,7 +15,7 @@ export async function ProfileCard({ name }: { name: string }) {
 
   return (
     <Animated>
-      <Card>
+      <Card size="sm">
         <CardHeader>
           <Item className="items-center flex-col">
             <ItemHeader>

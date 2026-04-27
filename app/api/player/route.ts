@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { EventEmitter } from "events";
 import z from "zod";
+import { getPalette } from "colorthief";
 
 const emitter = new EventEmitter();
 
@@ -8,28 +9,44 @@ const playerSchema = z.object({
   name: z.string(),
   balance: z.number(),
   status: z.enum(["ONLINE", "OFFLINE"]),
-  skin: z.any()
-})
-
+  skin: z.object({
+    textures: z.object({
+      SKIN: z.object({
+        url: z.string(),
+      }),
+    }),
+  }),
+});
 
 export async function POST(req: Request) {
   const data = await req.json();
-  const parsed = playerSchema.safeParse(data)
+  const parsed = playerSchema.safeParse(data);
   if (parsed.error) {
-    return new Response(JSON.stringify(parsed.error), {status: 400})
+    return new Response(JSON.stringify(parsed.error), { status: 400 });
   }
+
+  const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}`;
+  const res = await fetch(src);
+  const buffer = Buffer.from(await res.arrayBuffer());
+  const palette = await getPalette(buffer, { colorCount: 2 });
+
+  const background = palette
+    ? `linear-gradient(135deg, ${palette[0].hex()} 0%, ${palette[1].hex()} 100%)`
+    : "transparent";
 
   await prisma.player.upsert({
     create: {
       ...parsed.data,
-      skin: JSON.stringify(parsed.data.skin)
+      skin: src,
+      background,
     },
     update: {
       ...parsed.data,
-      skin: JSON.stringify(parsed.data.skin)
+      skin: src,
+      background,
     },
-    where: {name : parsed.data.name}
-  })
+    where: { name: parsed.data.name },
+  });
 
   emitter.emit("player", JSON.stringify(data));
 

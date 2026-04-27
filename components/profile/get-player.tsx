@@ -9,8 +9,9 @@ export const getPlayer = cache(async (name: string) => {
     include: {
       playerComments: {
         orderBy: { createdAt: "desc" },
-        include: { author: true },
+        include: { author: true, likes: true },
       },
+      posts: true
     },
   });
 

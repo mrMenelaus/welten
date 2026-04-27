@@ -7,6 +7,8 @@ import { AppSidebar } from "@/components/layout/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
+import { getSession } from "@/lib/auth/get-session";
+import { AuthProvider } from "@/components/auth/auth-provider";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -30,6 +32,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const authPromise = getSession();
+
   return (
     <html
       suppressHydrationWarning
@@ -44,24 +48,26 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class">
-          <SidebarProvider>
-            <AppSidebar />
-            <div className="flex flex-col flex-1">
-              <nav>
-                <div className="container mx-auto p-4 flex gap-2 items-center">
-                  <SidebarTrigger />
-                  <div className="flex-1"/>
-                  <ModeToggle/>
-                </div>
-              </nav>
-              <Separator />
-              <main className="flex-1">
-                <div className="container mx-auto p-4">{children}</div>
-              </main>
-            </div>
-          </SidebarProvider>
-        </ThemeProvider>
+        <AuthProvider authPromise={authPromise}>
+          <ThemeProvider attribute="class">
+            <SidebarProvider>
+              <AppSidebar />
+              <div className="flex flex-col flex-1">
+                <nav>
+                  <div className="container mx-auto p-4 flex gap-2 items-center">
+                    <SidebarTrigger />
+                    <div className="flex-1" />
+                    <ModeToggle />
+                  </div>
+                </nav>
+                <Separator />
+                <main className="flex-1">
+                  <div className="container mx-auto p-4">{children}</div>
+                </main>
+              </div>
+            </SidebarProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
