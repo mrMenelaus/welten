@@ -26,6 +26,7 @@ import {
   InputGroupTextarea,
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
+import { UploadButton } from "@/lib/uploadthing";
 
 export function CreatePost() {
   const [isPending, startTransition] = useTransition();
@@ -34,6 +35,7 @@ export function CreatePost() {
     resolver: zodResolver(postSchema),
     defaultValues: {
       content: "",
+      image: "",
     },
   });
 
@@ -60,6 +62,20 @@ export function CreatePost() {
             <DialogDescription>Что у тебя сегодня на уме?</DialogDescription>
           </DialogHeader>
           <FieldGroup>
+            <Field>
+              <Controller
+                name="image"
+                control={form.control}
+                render={({ field }) => (
+                  <UploadButton
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      field.onChange(res[0].ufsUrl);
+                    }}
+                  />
+                )}
+              />
+            </Field>
             <Controller
               control={form.control}
               name="content"

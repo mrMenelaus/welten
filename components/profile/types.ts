@@ -5,5 +5,6 @@ export const commentSchema = z.object({
 });
 
 export const postSchema = z.object({
+  image: z.url(),
   content: z.string().max(600, "Комментарий не должен быть больше 600 символов"),
 });

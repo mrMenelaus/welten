@@ -65,6 +65,8 @@ model Post {
   author   Player @relation(fields: [authorId], references: [id])
   authorId String
 
+  image String @default("https://nxq44gfls2.ufs.sh/f/DO8NPlKTQEfVRsPBtty1I9fkxotLQqTAb0YiXGSdzOpPJvVh")
+
   likes Like[]
 
   comments Comment[]

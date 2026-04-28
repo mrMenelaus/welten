@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "nmsr.nickac.dev" },
-      { hostname: "i.ytimg.com" },
+      { hostname: "nxq44gfls2.ufs.sh" },
     ],
   },
 };

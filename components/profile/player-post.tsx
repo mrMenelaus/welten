@@ -12,6 +12,7 @@ import {
 import { Badge } from "../ui/badge";
 import { Comment, Post } from "@/lib/generated/prisma/client";
 import Link from "next/link";
+import Image from "next/image";
 
 export function PlayerPost({
   post,
@@ -19,7 +20,10 @@ export function PlayerPost({
   post: Post & { _count: { comments: number } };
 }) {
   return (
-    <Card>
+    <Card className="pt-0">
+      <div className="aspect-video relative">
+        <Image src={post.image} alt="photo" fill className="object-cover" />
+      </div>
       <CardHeader>
         <CardTitle>{post.createdAt.toLocaleDateString()}</CardTitle>
         <CardDescription>10 просмотров</CardDescription>
