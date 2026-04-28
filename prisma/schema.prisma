@@ -15,42 +15,20 @@ datasource db {
 model Player {
   id String @id @default(cuid())
 
-  postLikes PostLike[]
-
   name    String @unique
   balance Int    @default(0)
   status  Status @default(OFFLINE)
 
   // :point_down: комментарии, где он "владелец"
-  playerComments PlayerComment[] @relation("PlayerComments")
+  playerComments Comment[] @relation("PlayerComments")
 
-  // :point_down: комментарии, где он автор
-  authoredComments PlayerComment[] @relation("AuthorComments")
-
-  comments Comment[]
+  comments Comment[] @relation("AuthoredComments")
   posts    Post[]
 
-  playerCommentLikes PlayerCommentLike[]
+  likes Like[]
 
-  skin String @default("https://nmsr.nickac.dev/bust/alex")
+  skin       String @default("https://nmsr.nickac.dev/bust/alex")
   background String @default("transparent")
-}
-
-model PlayerComment {
-  id String @id @default(cuid())
-
-  // :point_down: к кому относится комментарий
-  player   Player @relation("PlayerComments", fields: [playerId], references: [id])
-  playerId String
-
-  content   String
-  createdAt DateTime @default(now())
-
-  // :point_down: кто написал
-  author   Player @relation("AuthorComments", fields: [authorId], references: [id])
-  authorId String
-
-  likes PlayerCommentLike[]
 }
 
 enum Status {
@@ -65,11 +43,16 @@ model Comment {
   createdAt DateTime @default(now())
 
   // :point_down: кто написал
-  author   Player @relation(fields: [authorId], references: [id])
+  author   Player @relation("AuthoredComments", fields: [authorId], references: [id])
   authorId String
 
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
+  post   Post?   @relation(fields: [postId], references: [id])
+  postId String?
+
+  player   Player? @relation("PlayerComments", fields: [playerId], references: [id])
+  playerId String?
+
+  likes Like[]
 }
 
 model Post {
@@ -82,26 +65,20 @@ model Post {
   author   Player @relation(fields: [authorId], references: [id])
   authorId String
 
-  likes PostLike[]
+  likes Like[]
 
   comments Comment[]
 }
 
-model PostLike {
+model Like {
   id String @id @default(cuid())
 
   author   Player @relation(fields: [authorId], references: [id])
   authorId String
 
-  posts Post[]
-}
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId String?
 
-model PlayerCommentLike {
-  id String @id @default(cuid())
-
-  author   Player @relation(fields: [authorId], references: [id])
-  authorId String
-
-  playerComment   PlayerComment @relation(fields: [playerCommentId], references: [id])
-  playerCommentId String
+  post   Post?   @relation(fields: [postId], references: [id])
+  postId String?
 }

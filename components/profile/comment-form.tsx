@@ -16,7 +16,7 @@ import { commentSchema } from "./types";
 import { leaveComment } from "./comment-actions";
 import { Spinner } from "../ui/spinner";
 
-export function CommentForm({ playerId }: { playerId: string }) {
+export function CommentForm({ entityId, type }: { entityId: string, type: "post" | "player" }) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -28,7 +28,7 @@ export function CommentForm({ playerId }: { playerId: string }) {
 
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
-      await leaveComment(playerId, data);
+      await leaveComment(type, entityId, data);
       form.reset()
     });
   });
@@ -67,9 +67,6 @@ export function CommentForm({ playerId }: { playerId: string }) {
               </InputGroupAddon>
             </InputGroup>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            <FieldDescription>
-              Вы можете оставить только один комментарий
-            </FieldDescription>
           </Field>
         )}
       />

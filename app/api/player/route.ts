@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { EventEmitter } from "events";
 import z from "zod";
-import { getPalette } from "colorthief";
+import { getColor, getPalette, getSwatches } from "colorthief";
 
 const emitter = new EventEmitter();
 
@@ -13,6 +13,9 @@ const playerSchema = z.object({
     textures: z.object({
       SKIN: z.object({
         url: z.string(),
+        metadata: z.object({
+          model: z.enum(["slim", "default"]).default("default"),
+        }),
       }),
     }),
   }),
@@ -25,13 +28,13 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify(parsed.error), { status: 400 });
   }
 
-  const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}`;
+  const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}?${parsed.data.skin.textures.SKIN.metadata.model === "default" ? "steve" : "alex"}`;
   const res = await fetch(src);
   const buffer = Buffer.from(await res.arrayBuffer());
-  const palette = await getPalette(buffer, { colorCount: 2 });
+  const palette = await getColor(buffer, { minSaturation: 10 });
 
   const background = palette
-    ? `linear-gradient(135deg, ${palette[0].hex()} 0%, ${palette[1].hex()} 100%)`
+    ? `linear-gradient(120deg,${palette.hex()}, transparent)`
     : "transparent";
 
   await prisma.player.upsert({

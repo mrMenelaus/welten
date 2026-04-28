@@ -15,14 +15,13 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Controller, useForm } from "react-hook-form";
 import { useTransition } from "react";
-import { commentSchema } from "./types";
+import { postSchema } from "./types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { leavePost } from "./post-actions";
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupText,
   InputGroupTextarea,
 } from "../ui/input-group";
@@ -31,8 +30,8 @@ import { Spinner } from "../ui/spinner";
 export function CreatePost() {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof commentSchema>>({
-    resolver: zodResolver(commentSchema),
+  const form = useForm<z.infer<typeof postSchema>>({
+    resolver: zodResolver(postSchema),
     defaultValues: {
       content: "",
     },
@@ -78,7 +77,7 @@ export function CreatePost() {
                     />
                     <InputGroupAddon align="block-end">
                       <InputGroupText data-invalid={fieldState.invalid}>
-                        {field.value.length}/280
+                        {field.value.length}/600
                       </InputGroupText>
                     </InputGroupAddon>
                   </InputGroup>

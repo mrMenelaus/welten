@@ -11,7 +11,11 @@ import {
 } from "../ui/item";
 import { getPlayer } from "./get-player";
 
-import { Player, PlayerComment, PlayerCommentLike } from "@/lib/generated/prisma/client";
+import {
+  Like,
+  Player,
+  Comment as CommentType,
+} from "@/lib/generated/prisma/client";
 import { CommentForm } from "./comment-form";
 import { Animated } from "../layout/animated";
 import { CommentControls } from "./comment-controls";
@@ -36,7 +40,9 @@ export async function ProfileComments({ name }: { name: string }) {
         ))}
       </ShowMore>
       {session ? (
-        session.sub !== player.id && <CommentForm playerId={player.id} />
+        session.sub !== player.id && (
+          <CommentForm type="player" entityId={player.id} />
+        )
       ) : (
         <AuthMessage />
       )}
@@ -44,7 +50,11 @@ export async function ProfileComments({ name }: { name: string }) {
   );
 }
 
-function Comment({ comment }: { comment: PlayerComment & { author: Player, likes: PlayerCommentLike[] } }) {
+export function Comment({
+  comment,
+}: {
+  comment: CommentType & { author: Player; likes: Like[] };
+}) {
   return (
     <Animated>
       <Item variant="outline" size="xs">

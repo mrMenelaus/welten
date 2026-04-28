@@ -7,7 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { refresh } from "next/cache";
 
 export async function leaveComment(
-  playerId: string,
+  type: "post" | "player",
+  entityId: string,
   data: z.input<typeof commentSchema>,
 ) {
   const session = await getSession();
@@ -19,9 +20,12 @@ export async function leaveComment(
     return "error";
   }
 
-  await new Promise((res) => setTimeout(res, 1000));
-  await prisma.playerComment.create({
-    data: { ...parsed.data, authorId: session.sub, playerId },
+  await prisma.comment.create({
+    data: {
+      ...parsed.data,
+      authorId: session.sub,
+      [type === "player" ? "playerId" : "postId"]: entityId,
+    },
   });
 
   refresh();
@@ -32,15 +36,15 @@ export async function like(commentId: string) {
   const session = await getSession();
   if (!session) return "error";
 
-  const comment = await prisma.playerCommentLike.findFirst({
-    where: { playerCommentId: commentId, authorId: session.sub },
+  const comment = await prisma.like.findFirst({
+    where: { commentId, authorId: session.sub },
   });
 
   if (comment) {
-    await prisma.playerCommentLike.delete({ where: { id: comment.id } });
+    await prisma.like.delete({ where: { id: comment.id } });
   } else {
-    await prisma.playerCommentLike.create({
-      data: { playerCommentId: commentId, authorId: session.sub },
+    await prisma.like.create({
+      data: { commentId, authorId: session.sub },
     });
   }
 
