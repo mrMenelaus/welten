@@ -1,4 +1,5 @@
 import { Animated } from "@/components/layout/animated";
+import { Avatar } from "@/components/profile/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,6 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemHeader,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { FingerprintPattern } from "lucide-react";
@@ -41,21 +52,23 @@ export default async function LinkPage({ searchParams }: PageProps<"/auth">) {
 
   return (
     <Animated>
-      <Card>
-        <CardHeader>
-          <CardTitle>Осталось совсем немного</CardTitle>
-          <CardDescription>
-            Нажмите кнопку рядом, чтобы забрать аккаунт
-          </CardDescription>
-          <CardAction>
-            <form action={claimPlayer}>
-              <Button type="submit" size={"icon-lg"}>
-                <FingerprintPattern />
-              </Button>
-            </form>
-          </CardAction>
-        </CardHeader>
-      </Card>
+      <Item variant="outline" className="flex-col items-center w-xs py-10 mx-auto ">
+        <ItemHeader>
+          <Avatar className="size-32 rounded-2xl" player={player} />
+        </ItemHeader>
+        <ItemContent>
+          <ItemTitle>{player.name}</ItemTitle>
+          <ItemDescription>Баланс: {player.balance}</ItemDescription>
+        </ItemContent>
+        <ItemFooter>
+          <form action={claimPlayer}>
+            <Button type="submit" variant="outline" size="lg">
+              <FingerprintPattern />
+              Войти в аккаунт
+            </Button>
+          </form>
+        </ItemFooter>
+      </Item>
     </Animated>
   );
 }

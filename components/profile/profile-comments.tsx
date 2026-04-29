@@ -36,7 +36,7 @@ export async function ProfileComments({ name }: { name: string }) {
       </div>
       <ShowMore initial={2}>
         {player.playerComments.map((comment) => (
-          <Comment key={comment.id} comment={comment} />
+            <Comment comment={comment} key={comment.id} />
         ))}
       </ShowMore>
       {session ? (
@@ -56,24 +56,24 @@ export function Comment({
   comment: CommentType & { author: Player; likes: Like[] };
 }) {
   return (
-    <Animated>
-      <Item variant="outline" size="xs">
-        {/* <ItemHeader>{comment.createdAt.toLocaleString()}</ItemHeader> */}
-        <ItemMedia>
-          <Avatar className="size-12 rounded-full" player={comment.author} />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>{comment.author.name}</ItemTitle>
-          <p className="flex gap-4">{comment.content}</p>
-        </ItemContent>
-        <Suspense>
-          <ItemActions>
-            <CommentControls comment={comment} />
-          </ItemActions>
-        </Suspense>
-        {/* <ItemFooter className="items-end"> */}
-        {/* </ItemFooter> */}
-      </Item>
-    </Animated>
+    <Item variant="outline" size="xs">
+      <ItemMedia>
+        <Avatar className="size-12 rounded-full" player={comment.author} />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>{comment.author.name}</ItemTitle>
+        <ItemDescription>
+          {comment.createdAt.toLocaleDateString()}
+        </ItemDescription>
+      </ItemContent>
+      <Suspense>
+        <ItemActions>
+          <CommentControls comment={comment} />
+        </ItemActions>
+      </Suspense>
+      <ItemFooter className="items-end p-2">
+        <p className="flex gap-4 text-muted-foreground">{comment.content}</p>
+      </ItemFooter>
+    </Item>
   );
 }
