@@ -17,7 +17,7 @@ export async function Avatar({
         style={{
           background: player.background,
         }}
-        className={cn("overflow-clip relative border border-border", className)}
+        className={cn("overflow-clip relative", className)}
       >
         <Image className="-scale-x-100" fill src={player.skin} alt="avatar" />
       </div>
