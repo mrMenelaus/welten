@@ -87,10 +87,10 @@ model Like {
   author   Player @relation(fields: [authorId], references: [id])
   authorId String
 
-  comment   Comment? @relation(fields: [commentId], references: [id])
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String?
 
-  post   Post?   @relation(fields: [postId], references: [id])
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String?
 }
 
@@ -99,13 +99,13 @@ model View {
   player   Player @relation(fields: [playerId], references: [id])
   playerId String
 
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 }
 
 model Image {
   id       String @id @default(cuid())
-  post Post @relation(fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
   ufsUrl String
