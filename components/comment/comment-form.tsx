@@ -1,7 +1,7 @@
 "use client";
 
 import { Controller, useForm } from "react-hook-form";
-import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
+import { Field, FieldError, FieldLabel } from "../ui/field";
 import {
   InputGroup,
   InputGroupAddon,
@@ -12,11 +12,17 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
-import { commentSchema } from "./types";
 import { leaveComment } from "./comment-actions";
 import { Spinner } from "../ui/spinner";
+import { commentSchema } from "../profile/types";
 
-export function CommentForm({ entityId, type }: { entityId: string, type: "post" | "player" }) {
+export function CommentForm({
+  entityId,
+  type,
+}: {
+  entityId: string;
+  type: "post" | "player";
+}) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -29,7 +35,7 @@ export function CommentForm({ entityId, type }: { entityId: string, type: "post"
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
       await leaveComment(type, entityId, data);
-      form.reset()
+      form.reset();
     });
   });
 

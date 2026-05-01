@@ -30,8 +30,9 @@ export async function ProfileCard({ name }: { name: string }) {
                 initial={{ status: player.status, balance: player.balance }}
               />
               <div className="flex gap-1 flex-wrap">
-                <Badge>Player</Badge>
-                <Badge>Admin</Badge>
+                {player.roles.map((e) => (
+                  <Badge key={e.id}>{e.value}</Badge>
+                ))}
               </div>
             </ItemContent>
           </Item>

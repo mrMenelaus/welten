@@ -1,12 +1,11 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { Pen } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -14,11 +13,9 @@ import {
 } from "../ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Controller, useForm } from "react-hook-form";
-import { useState, useTransition } from "react";
-import { postSchema } from "./types";
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { leavePost } from "./post-actions";
 import {
   InputGroup,
   InputGroupAddon,
@@ -26,69 +23,40 @@ import {
   InputGroupTextarea,
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
-import { UploadButton } from "@/lib/uploadthing";
-import Image from "next/image";
+import { commentSchema } from "../profile/types";
+import { editComment } from "./comment-actions";
+import { Comment } from "@/lib/generated/prisma/client";
 
-export function CreatePost() {
-  const [open, setOpen] = useState(false);
+export function EditComment({ comment }: { comment: Comment }) {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof postSchema>>({
-    resolver: zodResolver(postSchema),
+  const form = useForm<z.infer<typeof commentSchema>>({
+    resolver: zodResolver(commentSchema),
     defaultValues: {
-      content: "",
-      images: [],
+      content: comment.content,
     },
   });
 
   const onSubmit = form.handleSubmit((data) => {
-    console.log("aboba");
     startTransition(async () => {
-      await leavePost(data);
-      setOpen(false);
+      await editComment(comment.id, data);
       form.reset();
     });
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Pencil />
-          Создать пост
+        <Button variant="outline" size="icon-xs">
+          <Pen />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Изменить комментарий</DialogTitle>
+        </DialogHeader>
         <form onSubmit={onSubmit}>
-          <DialogHeader>
-            <DialogTitle>Создание поста</DialogTitle>
-            <DialogDescription>Что у тебя сегодня на уме?</DialogDescription>
-          </DialogHeader>
           <FieldGroup>
-            <Controller
-              name="images"
-              control={form.control}
-              render={({ field }) => (
-                <Field>
-                  <UploadButton
-                    endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
-                      field.onChange(res);
-                    }}
-                  />
-                  <div className="grid gap-2 grid-cols-4">
-                    {field.value.map((image) => (
-                      <div
-                        key={image.name}
-                        className="aspect-square rounded-md overflow-clip relative"
-                      >
-                        <Image fill src={image.ufsUrl} alt={image.name} />
-                      </div>
-                    ))}
-                  </div>
-                </Field>
-              )}
-            />
             <Controller
               control={form.control}
               name="content"
@@ -117,20 +85,23 @@ export function CreatePost() {
               )}
             />
           </FieldGroup>
+          
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Выйти</Button>
             </DialogClose>
-            <Button
-              type="submit"
-              variant="default"
-              size="sm"
-              className="ml-auto"
-              disabled={isPending}
-            >
-              {isPending && <Spinner />}
-              Создать
-            </Button>
+            <DialogClose asChild>
+              <Button
+                type="submit"
+                variant="default"
+                size="sm"
+                className="ml-auto"
+                disabled={isPending}
+              >
+                {isPending && <Spinner />}
+                Сохранить изменения
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>

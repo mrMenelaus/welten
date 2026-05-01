@@ -24,11 +24,20 @@ model Player {
 
   comments Comment[] @relation("AuthoredComments")
   posts    Post[]
+  roles Role[]
 
   likes Like[]
 
+  views View[]
+
   skin       String @default("https://nmsr.nickac.dev/bust/alex")
   background String @default("transparent")
+}
+
+model Role {
+  id String @id @default(cuid())
+  value String @unique
+  players Player[]
 }
 
 enum Status {
@@ -65,10 +74,10 @@ model Post {
   author   Player @relation(fields: [authorId], references: [id])
   authorId String
 
-  image String @default("https://nxq44gfls2.ufs.sh/f/DO8NPlKTQEfVRsPBtty1I9fkxotLQqTAb0YiXGSdzOpPJvVh")
+  images Image[]
 
-  likes Like[]
-
+  likes    Like[]
+  views    View[]
   comments Comment[]
 }
 
@@ -83,4 +92,22 @@ model Like {
 
   post   Post?   @relation(fields: [postId], references: [id])
   postId String?
+}
+
+model View {
+  id       String @id @default(cuid())
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId String
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+}
+
+model Image {
+  id       String @id @default(cuid())
+  post Post @relation(fields: [postId], references: [id])
+  postId String
+
+  ufsUrl String
+  name String
 }

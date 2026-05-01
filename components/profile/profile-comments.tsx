@@ -1,28 +1,10 @@
 import ShowMore from "../layout/show-more";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemFooter,
-  ItemHeader,
-  ItemMedia,
-  ItemTitle,
-} from "../ui/item";
 import { getPlayer } from "./get-player";
 
-import {
-  Like,
-  Player,
-  Comment as CommentType,
-} from "@/lib/generated/prisma/client";
-import { CommentForm } from "./comment-form";
-import { Animated } from "../layout/animated";
-import { CommentControls } from "./comment-controls";
-import { Avatar } from "./avatar";
 import { getSession } from "@/lib/auth/get-session";
 import AuthMessage from "@/lib/auth/auth-message";
-import { Suspense } from "react";
+import { Comment } from "../comment/comment";
+import { CommentForm } from "../comment/comment-form";
 
 export async function ProfileComments({ name }: { name: string }) {
   const session = await getSession();
@@ -47,33 +29,5 @@ export async function ProfileComments({ name }: { name: string }) {
         <AuthMessage />
       )}
     </div>
-  );
-}
-
-export function Comment({
-  comment,
-}: {
-  comment: CommentType & { author: Player; likes: Like[] };
-}) {
-  return (
-    <Item variant="outline" size="xs">
-      <ItemMedia>
-        <Avatar className="size-12 rounded-full" player={comment.author} />
-      </ItemMedia>
-      <ItemContent>
-        <ItemTitle>{comment.author.name}</ItemTitle>
-        <ItemDescription>
-          {comment.createdAt.toLocaleDateString()}
-        </ItemDescription>
-      </ItemContent>
-      <Suspense>
-        <ItemActions>
-          <CommentControls comment={comment} />
-        </ItemActions>
-      </Suspense>
-      <ItemFooter className="items-end p-2">
-        <p className="flex gap-4 text-muted-foreground">{comment.content}</p>
-      </ItemFooter>
-    </Item>
   );
 }

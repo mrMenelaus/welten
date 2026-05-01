@@ -51,24 +51,26 @@ export default async function LinkPage({ searchParams }: PageProps<"/auth">) {
   }
 
   return (
-    <Animated>
-      <Item variant="outline" className="flex-col items-center w-xs py-10 mx-auto ">
-        <ItemHeader>
-          <Avatar className="size-32 rounded-2xl" player={player} />
-        </ItemHeader>
-        <ItemContent>
-          <ItemTitle>{player.name}</ItemTitle>
-          <ItemDescription>Баланс: {player.balance}</ItemDescription>
-        </ItemContent>
-        <ItemFooter>
-          <form action={claimPlayer}>
-            <Button type="submit" variant="outline" size="lg">
-              <FingerprintPattern />
-              Войти в аккаунт
-            </Button>
-          </form>
-        </ItemFooter>
-      </Item>
-    </Animated>
+    <div className="w-full h-full flex justify-center items-center">
+      <Animated className="flex p-16 rounded-4xl border-border border flex-col items-center text-center h-3/4 gap-4">
+        <Avatar className="size-64 rounded-2xl" player={player} />
+        <div>
+          <div className="leading-12 font-black text-3xl">{player.name}</div>
+          <div className="text-lg">Баланс: {player.balance}</div>
+        </div>
+        <div className="flex-1"/>
+        <form action={claimPlayer}>
+          <Button
+            type="submit"
+            variant="outline"
+            size="lg"
+            className="hover:bg-primary ease-in-out duration-1000"
+          >
+            <FingerprintPattern />
+            Войти в аккаунт
+          </Button>
+        </form>
+      </Animated>
+    </div>
   );
 }

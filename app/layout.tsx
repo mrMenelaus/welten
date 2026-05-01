@@ -47,12 +47,12 @@ export default function RootLayout({
         figtree.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">
+      <body>
         <AuthProvider authPromise={authPromise}>
           <ThemeProvider attribute="class">
             <SidebarProvider>
-              <AppSidebar />
-              <div className="flex flex-col flex-1">
+                <AppSidebar />
+              <div className="min-h-full flex flex-col flex-1">
                 <nav>
                   <div className="container mx-auto p-4 flex gap-2 items-center">
                     <SidebarTrigger />
@@ -61,8 +61,8 @@ export default function RootLayout({
                   </div>
                 </nav>
                 <Separator />
-                <main className="flex-1">
-                  <div className="container mx-auto p-4">{children}</div>
+                <main className="flex-1 flex flex-col">
+                  <div className="container mx-auto p-4 flex-1">{children}</div>
                 </main>
               </div>
             </SidebarProvider>

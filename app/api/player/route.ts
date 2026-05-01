@@ -35,6 +35,7 @@ const playerSchema = z.object({
   name: z.string(),
   balance: z.number(),
   status: z.enum(["ONLINE", "OFFLINE"]),
+  nodes: z.string().array(),
   skin: z.object({
     textures: z.object({
       SKIN: z.object({
@@ -59,16 +60,31 @@ export async function POST(req: Request) {
   const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}?${parsed.data.skin.textures.SKIN.metadata.model === "default" ? "steve" : "alex"}`;
   const background = await getGradientFromImage(src);
 
+  const { nodes } = parsed.data;
+
   await prisma.player.upsert({
     create: {
-      ...parsed.data,
+      name: parsed.data.name,
+      balance: parsed.data.balance,
       skin: src,
       background,
+      roles: {
+        connectOrCreate: nodes.map((role) => ({
+          create: { value: role },
+          where: { value: role },
+        })),
+      },
     },
     update: {
-      ...parsed.data,
+      balance: parsed.data.balance,
       skin: src,
       background,
+      roles: {
+        connectOrCreate: nodes.map((role) => ({
+          create: { value: role },
+          where: { value: role },
+        })),
+      },  
     },
     where: { name: parsed.data.name },
   });
