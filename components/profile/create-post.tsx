@@ -116,22 +116,22 @@ export function CreatePost() {
                 </Field>
               )}
             />
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Выйти</Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                variant="default"
+                size="sm"
+                className="ml-auto"
+                disabled={isPending}
+              >
+                {isPending && <Spinner />}
+                Создать
+              </Button>
+            </DialogFooter>
           </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Выйти</Button>
-            </DialogClose>
-            <Button
-              type="submit"
-              variant="default"
-              size="sm"
-              className="ml-auto"
-              disabled={isPending}
-            >
-              {isPending && <Spinner />}
-              Создать
-            </Button>
-          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

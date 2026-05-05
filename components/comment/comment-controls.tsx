@@ -1,24 +1,12 @@
 "use client";
 
-import {
-  Player,
-  Comment,
-  Like as LikeType,
-} from "@/lib/generated/prisma/client";
 import { useAuth } from "../auth/auth-provider";
 import { EditComment } from "./edit-comment";
 import { Like } from "../like/like";
 import { DeleteComment } from "./delete-comment";
+import { Comment } from "../profile/get-player";
 
-export function CommentControls({
-  comment,
-}: {
-  comment: Comment & {
-    author: Player;
-    _count: { likes: number };
-    likes: LikeType[];
-  };
-}) {
+export function CommentControls({ comment }: { comment: Comment }) {
   const session = useAuth();
 
   return (

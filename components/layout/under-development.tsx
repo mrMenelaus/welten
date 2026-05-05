@@ -12,7 +12,15 @@ import { Animated } from "./animated";
 
 export function UnderDevelopment() {
   return (
-    <Animated>
+    <Animated
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 0.3, 1, 0.8, 1] }}
+      transition={{
+        duration: 0.8,
+        ease: "easeInOut",
+        times: [0, 0.2, 0.4, 0.7, 1],
+      }}
+    >
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="default">

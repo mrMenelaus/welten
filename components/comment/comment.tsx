@@ -1,8 +1,4 @@
-import {
-  Player,
-  Comment as CommentType,
-  Like,
-} from "@/lib/generated/prisma/client";
+import { Comment as CommentType } from "../profile/get-player";
 import {
   Item,
   ItemActions,
@@ -16,11 +12,7 @@ import { Avatar } from "../profile/avatar";
 import { Suspense } from "react";
 import { CommentControls } from "./comment-controls";
 
-export function Comment({
-  comment,
-}: {
-  comment: CommentType & { author: Player; _count: {likes: number}, likes: Like[] };
-}) {
+export function Comment({ comment }: { comment: CommentType }) {
   return (
     <Item variant="outline" size="xs">
       <ItemMedia>
@@ -38,7 +30,7 @@ export function Comment({
         </ItemActions>
       </Suspense>
       <ItemFooter className="items-end p-2">
-        <p className="flex gap-4 text-muted-foreground">{comment.content}</p>
+        <p className="flex gap-4 text-muted-foreground whitespace-pre-wrap">{comment.content}</p>
       </ItemFooter>
     </Item>
   );

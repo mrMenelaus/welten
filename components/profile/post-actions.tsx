@@ -37,5 +37,6 @@ export async function deletePost(postId: string) {
   });
 
   refresh();
+
   return "success";
 }

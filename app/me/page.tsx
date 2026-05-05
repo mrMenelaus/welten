@@ -1,54 +1,48 @@
+import { ProfileCard } from "@/components/profile/profile-card";
+import { getSession } from "@/lib/auth/get-session";
+import { CreatePost } from "@/components/profile/create-post";
+import { PostList } from "@/components/profile/post-list";
+import { getPlayer } from "@/components/profile/get-player";
 import {
   Card,
+  CardAction,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Suspense } from "react";
-import { ProfileCard } from "@/components/profile/profile-card";
-import { getSession } from "@/lib/auth/get-session";
-import { PlayerPost } from "@/components/profile/player-post";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
-import { CreatePost } from "@/components/profile/create-post";
-import { PostList } from "@/components/profile/post-list";
 
-export default function Me() {
-  return (
-    <div className="flex gap-4 flex-col">
-      <Suspense>
-        <Profile />
-      </Suspense>
-    </div>
-  );
-}
-
-async function Profile() {
+export default async function Profile() {
   const session = await getSession();
+  if (!session) throw new Error();
+
+  const profile = await getPlayer(session.name);
+
+  if (!profile) return null;
+
+  const lastPublished =
+    profile.posts.at(0)?.createdAt.toDateString() ?? "Неизвестно";
+
   return (
-    session && (
-      <div className="flex-1 flex flex-col lg:flex-row gap-3">
+    <div>
+      <div className="flex-1 flex flex-col-reverse lg:flex-row gap-3">
         <div className="flex flex-col flex-1 gap-4">
-          <Item variant="outline">
-            <ItemContent>
-              <ItemTitle>Ваши посты</ItemTitle>
-              <ItemDescription>Последняя запись была (неразборчиво)</ItemDescription>
-            </ItemContent>
-            <ItemActions>
-              <CreatePost />
-            </ItemActions>
-          </Item>
-          <PostList name={session.name} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Ваши посты</CardTitle>
+              <CardDescription>
+                Последняя запись была {lastPublished}
+              </CardDescription>
+                <CardAction>
+                  <CreatePost />
+                </CardAction>
+            </CardHeader>
+          </Card>
+          <PostList posts={profile.posts} />
         </div>
         <div className="lg:w-sm">
-          <ProfileCard name={session.name} />
+          <ProfileCard player={profile} />
         </div>
       </div>
-    )
+    </div>
   );
 }

@@ -10,21 +10,17 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Image, Like as LikeType, Post } from "@/lib/generated/prisma/client";
 import Link from "next/link";
 import { SendView } from "../post/send-view";
-import { Like } from "../like/like";
 import { PostGallery } from "../post/post-gallery";
 import { PostControls } from "../post/post-controls";
+import { Post } from "./get-player";
+import { Like } from "../like/like";
 
 export function PlayerPost({
   post,
 }: {
-  post: Post & {
-    images: Image[];
-    likes: LikeType[];
-    _count: { comments: number; views: number; likes: number };
-  };
+  post: Post
 }) {
   return (
     <Card size="sm">
@@ -38,14 +34,14 @@ export function PlayerPost({
       </CardHeader>
       <CardContent className="flex-1">
         <SendView postId={post.id} />
-        <p className="leading-7 not-first:mt-6 line-clamp-5 mb-4">
+        <p className="leading-7 not-first:mt-6 line-clamp-5 whitespace-pre-wrap mb-4">
           {post.content}
         </p>
         <PostGallery images={post.images} />
       </CardContent>
       <CardFooter>
         <Like
-          isLiked={Boolean(post.likes.length)}
+          isLiked={post.isLiked}
           count={post._count.likes}
           entityId={post.id}
           type="post"

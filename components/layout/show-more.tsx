@@ -30,11 +30,11 @@ export default function ShowMore({ children, initial = 5 }: Props) {
         >
           {expanded ? (
             <>
-              <ChevronUp /> Свернуть комментарии
+              <ChevronUp /> Свернуть
             </>
           ) : (
             <>
-              <ChevronDown /> Развернуть комментарии ({remaining})
+              <ChevronDown /> Развернуть ({remaining})
             </>
           )}
         </Button>

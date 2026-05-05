@@ -8,10 +8,15 @@ import {
   ItemTitle,
 } from "../ui/item";
 import { Avatar } from "../profile/avatar";
-import { Button } from "../ui/button";
-import { SmilePlus } from "lucide-react";
+import { ReactNode } from "react";
 
-export function PlayerCard({ player }: { player: Player }) {
+export function PlayerCard({
+  player,
+  children,
+}: {
+  player: Player;
+  children?: ReactNode;
+}) {
   return (
     <Item variant="outline">
       <ItemMedia>
@@ -23,11 +28,7 @@ export function PlayerCard({ player }: { player: Player }) {
           Bio: I am a frontend developer from Russia
         </ItemDescription>
       </ItemContent>
-      <ItemActions>
-        <Button variant="outline">
-          <SmilePlus /> Добавить в друзья
-        </Button>
-      </ItemActions>
+      {children && <ItemActions>{children}</ItemActions>}
     </Item>
   );
 }

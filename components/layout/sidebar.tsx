@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bell, Bookmark, Coins, Handshake, Home, User } from "lucide-react";
+import { Bell, Bookmark, Coins, Handshake, Home, Landmark, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -20,12 +20,17 @@ const navigation = [
     name: "Профиль",
   },
   {
+    href: "/bank",
+    icon: Landmark,
+    name: "Банк",
+  },
+  {
     href: "/friends",
     icon: Handshake,
     name: "Друзья",
   },
   {
-    href: "#",
+    href: "/donate",
     icon: Coins,
     name: "Донат",
   },
@@ -43,14 +48,14 @@ const navigation = [
 
 export function AppSidebar() {
 
-  const pathname = usePathname()
+  // const pathname = usePathname()
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-                <SidebarMenuButton  asChild isActive={pathname === "/"}>
+                <SidebarMenuButton  asChild>
                   <Link href="/">
                   <Home />
                     <span>Главная</span>
@@ -64,7 +69,7 @@ export function AppSidebar() {
           <SidebarMenu>
             {navigation.map((e) => (
               <SidebarMenuItem key={e.name}>
-                <SidebarMenuButton isActive={e.href === pathname} asChild>
+                <SidebarMenuButton asChild>
                   <Link href={e.href}>
                     <e.icon />
                     <span>{e.name}</span>

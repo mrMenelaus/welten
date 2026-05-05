@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Likeable } from "./types";
 import { like } from "./like-actions";
 import { cn } from "@/lib/utils";
+import { useOptimistic } from "react";
 
 export function Like({
   count,
@@ -22,15 +23,27 @@ export function Like({
 }) {
   const session = useAuth();
 
+  const [optimisticLikes, setOptimisticLikes] = useOptimistic({
+    count,
+    isLiked,
+  });
+
   return (
-    <Button
-      variant="outline"
-      size={size}
-      disabled={!session}
-      onClick={() => like(type, entityId)}
+    <form
+      action={async () => {
+        setOptimisticLikes((prev) => ({
+          isLiked: !prev.isLiked,
+          count: prev.isLiked ? prev.count - 1 : prev.count + 1,
+        }));
+        await like(type, entityId);
+      }}
     >
-      <Heart className={cn({ "fill-card-foreground": isLiked })} />
-      {count}
-    </Button>
+      <Button variant="outline" size={size} disabled={!session} type="submit">
+        <Heart
+          className={cn({ "fill-card-foreground": optimisticLikes.isLiked })}
+        />
+        {optimisticLikes.count}
+      </Button>
+    </form>
   );
 }

@@ -6,7 +6,7 @@ export const getSession = cache(async () => {
   const token = (await cookies()).get("token")?.value;
   if (!token) return null;
     try {
-        const player = jwt.verify(token, process.env.JWT_SECRET!) as { name: string, sub: string };
+        const player = jwt.verify(token, process.env.JWT_SECRET!) as { name: string, sub: string, roles: string[] };
         return player
     } catch {
         return null

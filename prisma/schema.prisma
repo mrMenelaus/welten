@@ -22,9 +22,12 @@ model Player {
   // :point_down: комментарии, где он "владелец"
   playerComments Comment[] @relation("PlayerComments")
 
+  sourceTransfers Transfer[] @relation("SourcePlayer")
+  targetTransfers Transfer[] @relation("TargetPlayer")
+
   comments Comment[] @relation("AuthoredComments")
   posts    Post[]
-  roles Role[]
+  roles    Role[]
 
   likes Like[]
 
@@ -35,8 +38,8 @@ model Player {
 }
 
 model Role {
-  id String @id @default(cuid())
-  value String @unique
+  id      String   @id @default(cuid())
+  value   String   @unique
   players Player[]
 }
 
@@ -104,10 +107,26 @@ model View {
 }
 
 model Image {
-  id       String @id @default(cuid())
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
   ufsUrl String
-  name String
+  name   String
+}
+
+model Transfer {
+  id String @id @default(cuid())
+
+  source   Player? @relation("SourcePlayer", fields: [sourceId], references: [id])
+  sourceId String?
+
+  target   Player? @relation("TargetPlayer", fields: [targetId], references: [id])
+  targetId String?
+
+  comment String?
+
+  amount Int
+
+  time DateTime @default(now())
 }

@@ -1,20 +1,23 @@
 import { Animated } from "../layout/animated";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Item, ItemContent, ItemHeader, ItemTitle } from "../ui/item";
-import { getPlayer } from "./get-player";
-import { UnderDevelopment } from "../layout/under-development";
+import { MappedPlayer } from "./get-player";
 import { PlayerStatus } from "./player-status";
 import { Badge } from "../ui/badge";
-import { Suspense } from "react";
 import { ProfileComments } from "./profile-comments";
 import { Avatar } from "./avatar";
 
-export async function ProfileCard({ name }: { name: string }) {
-  const player = await getPlayer(name);
-  if (!player) return <UnderDevelopment />;
-
+export async function ProfileCard({ player }: { player: MappedPlayer }) {
   return (
-    <Animated>
+    <Animated
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 0.3, 1, 0.8, 1] }}
+      transition={{
+        duration: 0.8,
+        ease: "easeInOut",
+        times: [0, 0.2, 0.4, 0.7, 1],
+      }}
+    >
       <Card size="sm">
         <CardHeader>
           <Item className="items-center flex-col">
@@ -36,18 +39,12 @@ export async function ProfileCard({ name }: { name: string }) {
               </div>
             </ItemContent>
           </Item>
-          <CardContent></CardContent>
-          <CardFooter>
-            <Suspense>
-              <ProfileComments name={name} />
-            </Suspense>
-          </CardFooter>
         </CardHeader>
+        <CardContent></CardContent>
+        <CardFooter className="block">
+          <ProfileComments comments={player.comments} />
+        </CardFooter>
       </Card>
     </Animated>
   );
 }
-
-// function PlayerNotFound (){
-//     return UnderDevelopment
-// }
