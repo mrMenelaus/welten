@@ -6,6 +6,8 @@ export async function GET(
 ) {
 
   const key = request.headers.get("welten-api-key")
+  console.log(key, process.env.API_KEY);
+  
   if (key !== process.env.API_KEY) {
     return new Response("Unauthorized", {status: 401})
   }
