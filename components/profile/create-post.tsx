@@ -52,11 +52,9 @@ export function CreatePost() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Pencil />
-          Создать пост
-        </Button>
+      <DialogTrigger render={<Button variant="outline" />}>
+        <Pencil />
+        Создать пост
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <form onSubmit={onSubmit}>
@@ -117,8 +115,8 @@ export function CreatePost() {
               )}
             />
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Выйти</Button>
+              <DialogClose render={<Button variant="outline" />}>
+                Выйти
               </DialogClose>
               <Button
                 type="submit"

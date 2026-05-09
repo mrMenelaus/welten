@@ -29,6 +29,9 @@ export default async function PostPage({
       likes: { where: { authorId: session.sub } },
       views: { where: { playerId: session.sub } },
       comments: {
+        orderBy: {
+          createdAt: "desc"
+        },
         include: {
           likes: { where: { authorId: session.sub } },
           author: true,

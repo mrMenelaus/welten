@@ -17,11 +17,7 @@ import { PostControls } from "../post/post-controls";
 import { Post } from "./get-player";
 import { Like } from "../like/like";
 
-export function PlayerPost({
-  post,
-}: {
-  post: Post
-}) {
+export function PlayerPost({ post }: { post: Post }) {
   return (
     <Card size="sm">
       <CardHeader>
@@ -47,11 +43,13 @@ export function PlayerPost({
           type="post"
           size="sm"
         />
-        <Button variant="outline" asChild>
-          <Link href={`/post/${post.id}`}>
-            <MessageCircleCheck />
-            {post._count.comments}
-          </Link>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href={`/post/${post.id}`} />}
+        >
+          <MessageCircleCheck />
+          {post._count.comments}
         </Button>
       </CardFooter>
     </Card>

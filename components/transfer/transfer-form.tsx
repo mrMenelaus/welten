@@ -12,15 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { transferSchema } from "./types";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +19,14 @@ import z from "zod";
 import { transfer } from "./transfer-actions";
 import { useRef, useState } from "react";
 import { Spinner } from "../ui/spinner";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "../ui/combobox";
 
 export function TransferForm({
   balance,
@@ -50,7 +49,7 @@ export function TransferForm({
   }
 
   const form = useForm<z.infer<typeof transferSchema>>({
-    defaultValues: { amount: 0, comment: "" },
+    defaultValues: { amount: 0, comment: "", target: null },
     resolver: zodResolver(transferSchema),
   });
 
@@ -104,25 +103,28 @@ export function TransferForm({
             render={({ field, fieldState }) => (
               <Field>
                 <FieldLabel htmlFor="receiver">Получатель</FieldLabel>
-                <Select
+                <Combobox
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
+                  items={players}
+                  itemToStringLabel={(id) =>
+                    players.find((e) => e.id === id)?.name ?? "Hell"
+                  }
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите игрока" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectGroup>
-                      <SelectLabel>Игроки</SelectLabel>
-                      {players.map((player) => (
-                        <SelectItem value={player.id} key={player.id}>
-                          {player.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FieldDescription>Игрок для получения</FieldDescription>
+                  <ComboboxInput placeholder="Выберите игрока" />
+                  <ComboboxContent>
+                    <ComboboxEmpty>Игрок не найден.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item: Player) => (
+                        <ComboboxItem key={item.id} value={item.id}>
+                          {item.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+
+                <FieldDescription>Игрок для перевода</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}

@@ -1,20 +1,22 @@
-import { Player } from "@/lib/generated/prisma/client";
+import { Player, Role } from "@/lib/generated/prisma/client";
 import {
   Item,
   ItemActions,
   ItemContent,
-  ItemDescription,
   ItemMedia,
   ItemTitle,
 } from "../ui/item";
 import { Avatar } from "../profile/avatar";
 import { ReactNode } from "react";
+import { Badge } from "../ui/badge";
 
 export function PlayerCard({
   player,
   children,
+  roles,
 }: {
   player: Player;
+  roles?: Role[];
   children?: ReactNode;
 }) {
   return (
@@ -24,9 +26,13 @@ export function PlayerCard({
       </ItemMedia>
       <ItemContent>
         <ItemTitle>{player.name}</ItemTitle>
-        <ItemDescription>
-          Bio: I am a frontend developer from Russia
-        </ItemDescription>
+        {roles && (
+          <div className="flex gap-2 items-center">
+            {roles.map((role) => (
+              <Badge key={role.id}>{role.value}</Badge>
+            ))}
+          </div>
+        )}
       </ItemContent>
       {children && <ItemActions>{children}</ItemActions>}
     </Item>

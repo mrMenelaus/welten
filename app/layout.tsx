@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { getSession } from "@/lib/auth/get-session";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { Suspense } from "react";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -51,7 +52,9 @@ export default function RootLayout({
         <AuthProvider authPromise={authPromise}>
           <ThemeProvider attribute="class">
             <SidebarProvider>
+              <Suspense>
                 <AppSidebar />
+              </Suspense>
               <div className="min-h-full flex flex-col flex-1">
                 <nav>
                   <div className="container mx-auto p-4 flex gap-2 items-center">

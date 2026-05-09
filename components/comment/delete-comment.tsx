@@ -21,10 +21,8 @@ import { deleteComment } from "./comment-actions";
 export function DeleteComment({ comment }: { comment: Comment }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="xs">
+      <AlertDialogTrigger render={<Button variant="destructive" size="xs"/>}>
           Удалить
-        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>

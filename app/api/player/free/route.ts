@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export async function GET() {
   const player = await prisma.player.findUnique({
-    where: { name: "JustFrog" },
+    where: { name: "JustJabka" },
   });
   if (!player) {
     return Response.json({ status: "ok" });

@@ -9,7 +9,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bell, Bookmark, Coins, Handshake, Home, Landmark, User } from "lucide-react";
+import {
+  Bell,
+  Bookmark,
+  Coins,
+  Handshake,
+  Home,
+  Landmark,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -47,21 +55,22 @@ const navigation = [
 ] as const;
 
 export function AppSidebar() {
-
-  // const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-                <SidebarMenuButton  asChild>
-                  <Link href="/">
+            <SidebarMenuButton
+              render={
+                <Link href="/">
                   <Home />
-                    <span>Главная</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+                  <span>Главная</span>
+                </Link>
+              }
+            />
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
@@ -69,12 +78,15 @@ export function AppSidebar() {
           <SidebarMenu>
             {navigation.map((e) => (
               <SidebarMenuItem key={e.name}>
-                <SidebarMenuButton asChild>
-                  <Link href={e.href}>
-                    <e.icon />
-                    <span>{e.name}</span>
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  isActive={pathname.startsWith(e.href)}
+                  render={
+                    <Link href={e.href}>
+                      <e.icon />
+                      <span>{e.name}</span>
+                    </Link>
+                  }
+                />
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

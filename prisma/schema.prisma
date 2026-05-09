@@ -21,11 +21,14 @@ model Player {
 
   // :point_down: комментарии, где он "владелец"
   playerComments Comment[] @relation("PlayerComments")
+  comments Comment[] @relation("AuthoredComments")
 
   sourceTransfers Transfer[] @relation("SourcePlayer")
   targetTransfers Transfer[] @relation("TargetPlayer")
 
-  comments Comment[] @relation("AuthoredComments")
+  friendshipSender   Friendship[] @relation("FriendshipSender")
+  friendshipReceiver Friendship[] @relation("FriendshipReceiver")
+
   posts    Post[]
   roles    Role[]
 
@@ -46,6 +49,26 @@ model Role {
 enum Status {
   ONLINE
   OFFLINE
+}
+
+model Friendship {
+  id String @id @default(cuid())
+
+  sender   Player @relation("FriendshipSender", fields: [senderId], references: [id])
+  senderId String
+
+  receiver   Player @relation("FriendshipReceiver", fields: [receiverId], references: [id])
+  receiverId String
+
+  answer Answer @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+enum Answer {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
 model Comment {

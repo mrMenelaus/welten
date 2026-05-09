@@ -27,8 +27,8 @@ export function PostControls({ post }: { post: Post }) {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="xs">Удалить</Button>
+      <AlertDialogTrigger render={<Button variant="destructive" size="xs" />}>
+        Удалить
       </AlertDialogTrigger>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>

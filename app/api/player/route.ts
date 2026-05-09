@@ -1,28 +1,27 @@
 import { prisma } from "@/lib/prisma";
 import { EventEmitter } from "events";
 import z from "zod";
-// import { Vibrant } from "node-vibrant/node";
+import { Vibrant } from "node-vibrant/node";
 
 const emitter = new EventEmitter();
 
 export async function getGradientFromImage(imageUrl: string) {
-  return "linear-gradient(120deg, #bdc3c7, #2c3e50)";
-  // try {
-  //   const palette = await Vibrant.from(imageUrl).getPalette();
+  try {
+    const palette = await Vibrant.from(imageUrl).getPalette();
 
-  //   // Выбираем яркие цвета в порядке приоритета
-  //   const colors = [palette.DarkVibrant?.hex, palette.LightVibrant?.hex].filter(
-  //     Boolean,
-  //   ) as string[];
+    // Выбираем яркие цвета в порядке приоритета
+    const colors = [palette.DarkVibrant?.hex, palette.LightVibrant?.hex].filter(
+      Boolean,
+    ) as string[];
 
-  //   if (colors.length < 2) {
-  //     return "linear-gradient(120deg, #3b82f6, #8b5cf6)"; // fallback
-  //   }
+    if (colors.length < 2) {
+      return "linear-gradient(120deg, #3b82f6, #8b5cf6)"; // fallback
+    }
 
-  //   return `linear-gradient(120deg, ${colors.join(", ")})`;
-  // } catch (e) {
-  //   return "linear-gradient(120deg, #bdc3c7, #2c3e50)";
-  // }
+    return `linear-gradient(120deg, ${colors.join(", ")})`;
+  } catch {
+    return "linear-gradient(120deg, #bdc3c7, #2c3e50)";
+  }
 }
 
 const playerSchema = z.object({

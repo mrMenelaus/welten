@@ -5,20 +5,27 @@ import { prisma } from "@/lib/prisma";
 import z from "zod";
 import { transferSchema } from "./types";
 
-export async function transfer(data: z.infer<typeof transferSchema>, key: string) {
+export async function transfer(
+  data: z.infer<typeof transferSchema>,
+  key: string,
+) {
   const session = await getSession();
-  if (!session) return {success: false};
+  if (!session) return { success: false };
   const player = await prisma.player.findUnique({ where: { id: session.sub } });
-  if (!player) return {success: false};
+  if (!player) return { success: false };
 
   const parsed = transferSchema.safeParse(data);
 
   if (parsed.error) {
-    return {success: false};
+    return { success: false };
+  }
+
+  if (!parsed.data.target) {
+    return { success: false };
   }
 
   if (parsed.data.amount > player.balance) {
-    return {success: false};
+    return { success: false };
   }
 
   await prisma.$transaction([
@@ -40,5 +47,5 @@ export async function transfer(data: z.infer<typeof transferSchema>, key: string
     }),
   ]);
 
-  return {success: true}
+  return { success: true };
 }

@@ -33,8 +33,12 @@ export default async function Bank() {
         <CardHeader>
           <CardTitle>История переводов</CardTitle>
           <CardAction>
-            <Button asChild variant="outline">
-              <Link href={"/bank/operations"}>Посмотреть</Link>
+            <Button
+              nativeButton={false}
+              variant="outline"
+              render={<Link href={"/bank/operations"} />}
+            >
+              Посмотреть
             </Button>
           </CardAction>
         </CardHeader>

@@ -46,10 +46,8 @@ export function EditComment({ comment }: { comment: Comment }) {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon-xs">
-          <Pen />
-        </Button>
+      <DialogTrigger render={<Button variant="outline" size="icon-xs" />}>
+        <Pen />
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
@@ -85,22 +83,24 @@ export function EditComment({ comment }: { comment: Comment }) {
               )}
             />
           </FieldGroup>
-          
+
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Выйти</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              Выйти
             </DialogClose>
-            <DialogClose asChild>
-              <Button
-                type="submit"
-                variant="default"
-                size="sm"
-                className="ml-auto"
-                disabled={isPending}
-              >
-                {isPending && <Spinner />}
-                Сохранить изменения
-              </Button>
+            <DialogClose
+              render={
+                <Button
+                  type="submit"
+                  variant="default"
+                  size="sm"
+                  className="ml-auto"
+                  disabled={isPending}
+                />
+              }
+            >
+              {isPending && <Spinner />}
+              Сохранить изменения
             </DialogClose>
           </DialogFooter>
         </form>
