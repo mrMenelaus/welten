@@ -1,6 +1,7 @@
 import {
   FriendshipAccept,
   FriendshipDecline,
+  FriendshipRemove,
   FriendshipStart,
 } from "@/components/player/friendship";
 import { PlayerCard } from "@/components/player/player-card";
@@ -18,7 +19,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
 import { User } from "lucide-react";
+import { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Друзья",
+};
 
 export default async function Friends({ searchParams }: PageProps<"/friends">) {
   return (
@@ -94,9 +100,11 @@ async function FriendList() {
   const acceptedFriendships = friendships.filter(
     (e) => e.answer === "ACCEPTED",
   );
+
   const pendingFriendships = friendships.filter(
     (e) => e.receiverId === session.sub && e.answer === "PENDING",
   );
+
   const declinedFriendships = friendships.filter(
     (e) => e.receiverId === session.sub && e.answer === "DECLINED",
   );
@@ -129,7 +137,9 @@ async function FriendList() {
                         ? friendship.receiver
                         : friendship.sender
                     }
-                  />
+                  >
+                    <FriendshipRemove friendshipId={friendship.id} />
+                  </PlayerCard>
                 ))
               ) : (
                 <Empty>

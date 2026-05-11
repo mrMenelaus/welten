@@ -9,13 +9,13 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Badge } from "../ui/badge";
 import Link from "next/link";
 import { SendView } from "../post/send-view";
 import { PostGallery } from "../post/post-gallery";
 import { PostControls } from "../post/post-controls";
 import { Post } from "./get-player";
 import { Like } from "../like/like";
+import { Suspense } from "react";
 
 export function PlayerPost({ post }: { post: Post }) {
   return (
@@ -24,8 +24,9 @@ export function PlayerPost({ post }: { post: Post }) {
         <CardTitle>{post.createdAt.toLocaleDateString()}</CardTitle>
         <CardDescription>{post._count.views} просмотров</CardDescription>
         <CardAction>
-          <Badge variant="outline">Новый</Badge>
-          <PostControls post={post} />
+          <Suspense>
+            <PostControls post={post} />
+          </Suspense>
         </CardAction>
       </CardHeader>
       <CardContent className="flex-1">

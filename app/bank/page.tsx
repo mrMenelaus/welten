@@ -13,8 +13,15 @@ import {
 import { getSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
 import coin from "@/public/wcoin.png";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+
+export const metadata: Metadata = {
+  title: "Банк"
+}
+
 
 export default async function Bank() {
   const session = await getSession();

@@ -29,7 +29,7 @@ export function PlayerCard({
         {roles && (
           <div className="flex gap-2 items-center">
             {roles.map((role) => (
-              <Badge key={role.id}>{role.value}</Badge>
+              <Badge variant="outline" key={role.id}>{role.value}</Badge>
             ))}
           </div>
         )}

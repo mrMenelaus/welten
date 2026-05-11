@@ -14,6 +14,11 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import coin from "@/public/wcoin.png";
 import { Avatar } from "@/components/profile/avatar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Операции",
+};
 
 export default async function Operations() {
   const session = await getSession();
@@ -48,7 +53,9 @@ export default async function Operations() {
                   )}
                 </ItemMedia>
                 <ItemContent>
-                  <ItemDescription>{display?.name ?? "Система"}</ItemDescription>
+                  <ItemDescription>
+                    {display?.name ?? "Система"}
+                  </ItemDescription>
                   <ItemTitle
                     className={
                       transfer.sourceId === session.sub

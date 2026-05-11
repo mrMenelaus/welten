@@ -5,8 +5,14 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { FingerprintPattern } from "lucide-react";
+import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+
+export const metadata: Metadata = {
+  title: "Авторизация"
+}
 
 export default async function LinkPage({ searchParams }: PageProps<"/auth">) {
   const { key } = await searchParams;

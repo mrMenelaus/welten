@@ -12,7 +12,13 @@ import {
 import { ItemGroup } from "@/components/ui/item";
 import { getSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Пост игрока"
+}
+
 
 export default async function PostPage({
   params,

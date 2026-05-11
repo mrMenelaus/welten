@@ -34,7 +34,7 @@ export async function transfer(
       data: { balance: { decrement: parsed.data.amount } },
     }),
     prisma.player.update({
-      where: { id: parsed.data.target },
+      where: { id: parsed.data.target.id },
       data: { balance: { increment: parsed.data.amount } },
     }),
     prisma.transfer.create({
@@ -42,7 +42,7 @@ export async function transfer(
         comment: parsed.data.comment,
         amount: parsed.data.amount,
         sourceId: player.id,
-        targetId: parsed.data.target,
+        targetId: parsed.data.target.id,
       },
     }),
   ]);

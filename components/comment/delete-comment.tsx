@@ -17,13 +17,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Comment } from "@/lib/generated/prisma/client";
 import { deleteComment } from "./comment-actions";
+import { Dispatch } from "react";
 
-export function DeleteComment({ comment }: { comment: Comment }) {
+export function DeleteComment({
+  comment,
+  open,
+  setOpen,
+}: {
+  comment: Comment;
+  open: boolean;
+  setOpen: Dispatch<boolean>;
+}) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="destructive" size="xs"/>}>
-          Удалить
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">

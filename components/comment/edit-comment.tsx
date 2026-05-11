@@ -13,7 +13,7 @@ import {
 } from "../ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Controller, useForm } from "react-hook-form";
-import { useTransition } from "react";
+import { Dispatch, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -27,12 +27,20 @@ import { commentSchema } from "../profile/types";
 import { editComment } from "./comment-actions";
 import { Comment } from "@/lib/generated/prisma/client";
 
-export function EditComment({ comment }: { comment: Comment }) {
+export function EditComment({
+  comment,
+  open,
+  setOpen,
+}: {
+  comment: Comment;
+  open: boolean;
+  setOpen: Dispatch<boolean>;
+}) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
-    defaultValues: {
+    values: {
       content: comment.content,
     },
   });
@@ -40,15 +48,11 @@ export function EditComment({ comment }: { comment: Comment }) {
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
       await editComment(comment.id, data);
-      form.reset();
     });
   });
 
   return (
-    <Dialog>
-      <DialogTrigger render={<Button variant="outline" size="icon-xs" />}>
-        <Pen />
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Изменить комментарий</DialogTitle>
@@ -61,7 +65,7 @@ export function EditComment({ comment }: { comment: Comment }) {
               render={({ fieldState, field }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="block-end-textarea">
-                    Текст поста
+                    Текст комментария
                   </FieldLabel>
                   <InputGroup>
                     <InputGroupTextarea

@@ -1,8 +1,19 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { Check, Trash, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { answerFriendship, startFriendship } from "./player-actions";
+import { answerFriendship, removeFriendship, startFriendship } from "./player-actions";
+
+export function FriendshipRemove({ friendshipId }: { friendshipId: string }) {
+  return (
+    <Button
+      variant="outline"
+      onClick={() => removeFriendship(friendshipId)}
+    >
+      <Trash /> Удалить
+    </Button>
+  );
+}
 
 export function FriendshipAccept({ friendshipId }: { friendshipId: string }) {
   return (

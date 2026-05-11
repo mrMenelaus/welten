@@ -48,7 +48,11 @@ export default function RootLayout({
         figtree.variable,
       )}
     >
-      <body>
+      <body style={
+        {
+          "--profile-dark": "159 7 18",
+          "--profile-light": "193 0 7",
+        } as React.CSSProperties}>
         <AuthProvider authPromise={authPromise}>
           <ThemeProvider attribute="class">
             <SidebarProvider>

@@ -28,12 +28,19 @@ export async function startFriendship(playerId: string) {
   return "ok";
 }
 
+export async function removeFriendship(id: string) {
+  const session = await getSession();
+  if (!session) return;
+
+  await prisma.friendship.delete({ where: { id } });
+}
+
 export async function answerFriendship(id: string, answer: Answer) {
   await prisma.friendship.update({
     data: { answer },
     where: { id },
   });
 
-  refresh()
+  refresh();
   return "ok";
 }

@@ -10,6 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Профиль",
+};
 
 export default async function Profile() {
   const session = await getSession();
@@ -23,7 +28,14 @@ export default async function Profile() {
     profile.posts.at(0)?.createdAt.toDateString() ?? "Неизвестно";
 
   return (
-    <div>
+    <div
+      style={
+        {
+          "--profile-dark": profile.background,
+          "--profile-light": profile.accent,
+        } as React.CSSProperties
+      }
+    >
       <div className="flex-1 flex flex-col-reverse lg:flex-row gap-3">
         <div className="flex flex-col flex-1 gap-4">
           <Card>
@@ -32,9 +44,9 @@ export default async function Profile() {
               <CardDescription>
                 Последняя запись была {lastPublished}
               </CardDescription>
-                <CardAction>
-                  <CreatePost />
-                </CardAction>
+              <CardAction>
+                <CreatePost />
+              </CardAction>
             </CardHeader>
           </Card>
           <PostList posts={profile.posts} />

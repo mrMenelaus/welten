@@ -21,7 +21,7 @@ model Player {
 
   // :point_down: комментарии, где он "владелец"
   playerComments Comment[] @relation("PlayerComments")
-  comments Comment[] @relation("AuthoredComments")
+  comments       Comment[] @relation("AuthoredComments")
 
   sourceTransfers Transfer[] @relation("SourcePlayer")
   targetTransfers Transfer[] @relation("TargetPlayer")
@@ -29,15 +29,19 @@ model Player {
   friendshipSender   Friendship[] @relation("FriendshipSender")
   friendshipReceiver Friendship[] @relation("FriendshipReceiver")
 
-  posts    Post[]
-  roles    Role[]
+  posts Post[]
+  roles Role[]
 
   likes Like[]
 
   views View[]
 
   skin       String @default("https://nmsr.nickac.dev/bust/alex")
-  background String @default("transparent")
+  
+  accent String @default("oklch(44.4% 0.177 26.899)")
+  background String @default("oklch(26.9% 0 0)")
+
+  @@index([name])
 }
 
 model Role {
@@ -95,6 +99,7 @@ model Post {
 
   content   String
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   // :point_down: кто написал
   author   Player @relation(fields: [authorId], references: [id])
@@ -152,4 +157,26 @@ model Transfer {
   amount Int
 
   time DateTime @default(now())
+}
+
+model Donate {
+  id          String @id @default(cuid())
+  param       String @unique
+  name        String
+  description String
+  cost        String @default("100.00")
+  background  String @default("https://nxq44gfls2.ufs.sh/f/DO8NPlKTQEfVM4Zpv6k0RaFld893AgyTWrQXH4n6txC1SKjG")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases Purchase[]
+}
+
+model Purchase {
+  id     String @id @default(cuid())
+  player String
+
+  donate   Donate @relation(fields: [donateId], references: [id])
+  donateId String
 }

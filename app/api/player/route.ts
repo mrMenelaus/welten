@@ -5,22 +5,18 @@ import { Vibrant } from "node-vibrant/node";
 
 const emitter = new EventEmitter();
 
-export async function getGradientFromImage(imageUrl: string) {
+export async function getPalette(imageUrl: string) {
   try {
     const palette = await Vibrant.from(imageUrl).getPalette();
-
-    // Выбираем яркие цвета в порядке приоритета
-    const colors = [palette.DarkVibrant?.hex, palette.LightVibrant?.hex].filter(
-      Boolean,
-    ) as string[];
-
-    if (colors.length < 2) {
-      return "linear-gradient(120deg, #3b82f6, #8b5cf6)"; // fallback
-    }
-
-    return `linear-gradient(120deg, ${colors.join(", ")})`;
+    return {
+      background: palette.DarkMuted?.rgb.join(" ") ?? "oklch(26.9% 0 0)",
+      accent: palette.DarkVibrant?.rgb.join(" ") ?? "oklch(20.8% 0.042 265.755)",
+    };
   } catch {
-    return "linear-gradient(120deg, #bdc3c7, #2c3e50)";
+    return {
+      background: "oklch(26.9% 0 0)",
+      accent: "oklch(20.8% 0.042 265.755)",
+    };
   }
 }
 
@@ -57,7 +53,10 @@ export async function POST(req: Request) {
   const roles = parsed.data.nodes.map((node) => ({ value: node }));
 
   const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}?${parsed.data.skin.textures.SKIN.metadata.model === "default" ? "steve" : "alex"}`;
-  const background = await getGradientFromImage(src);
+  
+  console.log(src);
+  
+  const palette = await getPalette(parsed.data.skin.textures.SKIN.url);
 
   // const {nodes} = parsed.data;
 
@@ -68,14 +67,14 @@ export async function POST(req: Request) {
       status: parsed.data.status,
       name: parsed.data.name,
       skin: src,
-      background,
+      ...palette,
       roles: {
         connect: roles,
       },
     },
     update: {
       skin: src,
-      background,
+      ...palette,
       status: parsed.data.status,
       roles: {
         set: roles,

@@ -10,12 +10,11 @@ export async function Avatar({
   player: Player;
   className?: string;
 }) {
-
   return (
     <Link href={`/player/${player.name}`}>
       <div
         style={{
-          background: player.background,
+          background: `linear-gradient(120deg, rgb(${player.accent}), rgb(${player.background}))`,
         }}
         className={cn("overflow-clip relative", className)}
       >

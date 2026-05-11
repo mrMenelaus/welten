@@ -62,7 +62,7 @@ export function CommentForm({
                 </InputGroupText>
                 <InputGroupButton
                   type="submit"
-                  variant="default"
+                  variant="outline"
                   size="sm"
                   className="ml-auto"
                   disabled={isPending}

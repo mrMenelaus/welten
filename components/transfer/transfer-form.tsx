@@ -48,9 +48,10 @@ export function TransferForm({
     return keyRef.current;
   }
 
-  const form = useForm<z.infer<typeof transferSchema>>({
-    defaultValues: { amount: 0, comment: "", target: null },
+  const form = useForm({
+    defaultValues: { amount: "0", comment: "", target: null! },
     resolver: zodResolver(transferSchema),
+    mode: "onChange",
   });
 
   // eslint-disable-next-line react-hooks/refs
@@ -75,21 +76,7 @@ export function TransferForm({
             render={({ field, fieldState }) => (
               <Field>
                 <FieldLabel htmlFor="sum">Сумма</FieldLabel>
-                <Input
-                  placeholder="150"
-                  id="sum"
-                  type="number"
-                  min={0}
-                  max={balance}
-                  value={field.value}
-                  onChange={(event) => {
-                    field.onChange(
-                      Number.isNaN(event.target.valueAsNumber)
-                        ? 0
-                        : event.target.valueAsNumber,
-                    );
-                  }}
-                />
+                <Input placeholder="150" id="sum" max={balance} {...field} />
                 <FieldDescription>Сумма для перевода</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -107,16 +94,14 @@ export function TransferForm({
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                   items={players}
-                  itemToStringLabel={(id) =>
-                    players.find((e) => e.id === id)?.name ?? "Hell"
-                  }
+                  itemToStringLabel={(item) => item.name}
                 >
                   <ComboboxInput placeholder="Выберите игрока" />
                   <ComboboxContent>
                     <ComboboxEmpty>Игрок не найден.</ComboboxEmpty>
                     <ComboboxList>
                       {(item: Player) => (
-                        <ComboboxItem key={item.id} value={item.id}>
+                        <ComboboxItem key={item.id} value={item}>
                           {item.name}
                         </ComboboxItem>
                       )}

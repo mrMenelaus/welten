@@ -1,6 +1,11 @@
 import { getPlayer } from "@/components/profile/get-player";
 import { PostList } from "@/components/profile/post-list";
 import { ProfileCard } from "@/components/profile/profile-card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Страница игрока",
+};
 
 export default async function Player({ params }: PageProps<"/player/[name]">) {
   const { name } = await params;
@@ -10,8 +15,14 @@ export default async function Player({ params }: PageProps<"/player/[name]">) {
   if (!profile) return null;
 
   return (
-
-    <div>
+    <div
+      style={
+        {
+          "--profile-dark": profile.background,
+          "--profile-light": profile.accent,
+        } as React.CSSProperties
+      }
+    >
       <div className="flex-1 flex flex-col lg:flex-row gap-3">
         <div className="flex flex-col flex-1 gap-4">
           <PostList posts={profile.posts} />
