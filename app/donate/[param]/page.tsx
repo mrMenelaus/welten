@@ -3,12 +3,12 @@ import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 
-export async function generateStaticParams() {
-  const donates = await prisma.donate.findMany();
-  return donates.map((donate) => ({
-    param: donate.param,
-  }));
-}
+// export async function generateStaticParams() {
+//   const donates = await prisma.donate.findMany();
+//   return donates.map((donate) => ({
+//     param: donate.param,
+//   }));
+// }
 
 export default async function DonatePage({
   params,
