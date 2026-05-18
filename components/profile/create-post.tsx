@@ -18,7 +18,7 @@ import { useState, useTransition } from "react";
 import { postSchema } from "./types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { leavePost } from "./post-actions";
+import { createPost } from "./post-actions";
 import {
   InputGroup,
   InputGroupAddon,
@@ -26,8 +26,7 @@ import {
   InputGroupTextarea,
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
-import { UploadButton } from "@/lib/uploadthing";
-import Image from "next/image";
+import { MultiUploader } from "@/lib/upload-button";
 
 export function CreatePost() {
   const [open, setOpen] = useState(false);
@@ -42,9 +41,8 @@ export function CreatePost() {
   });
 
   const onSubmit = form.handleSubmit((data) => {
-    console.log("aboba");
     startTransition(async () => {
-      await leavePost(data);
+      await createPost(data);
       setOpen(false);
       form.reset();
     });
@@ -56,35 +54,26 @@ export function CreatePost() {
         <Pencil />
         Создать пост
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
-        <form onSubmit={onSubmit}>
-          <DialogHeader>
-            <DialogTitle>Создание поста</DialogTitle>
-            <DialogDescription>Что у тебя сегодня на уме?</DialogDescription>
-          </DialogHeader>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Создание поста</DialogTitle>
+          <DialogDescription>Что у тебя сегодня на уме?</DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={onSubmit}
+          id="create-post"
+          className="no-scrollbar max-h-[50vh] overflow-y-auto"
+        >
           <FieldGroup>
             <Controller
               name="images"
               control={form.control}
               render={({ field }) => (
-                <Field>
-                  <UploadButton
-                    endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
-                      field.onChange(res);
-                    }}
-                  />
-                  <div className="grid gap-2 grid-cols-4">
-                    {field.value.map((image) => (
-                      <div
-                        key={image.name}
-                        className="aspect-square rounded-md overflow-clip relative"
-                      >
-                        <Image fill src={image.ufsUrl} alt={image.name} />
-                      </div>
-                    ))}
-                  </div>
-                </Field>
+                <MultiUploader
+                  endpoint="imageUploader"
+                  setUploaded={field.onChange}
+                  uploaded={field.value}
+                />
               )}
             />
             <Controller
@@ -114,23 +103,21 @@ export function CreatePost() {
                 </Field>
               )}
             />
-            <DialogFooter>
-              <DialogClose render={<Button variant="outline" />}>
-                Выйти
-              </DialogClose>
-              <Button
-                type="submit"
-                variant="default"
-                size="sm"
-                className="ml-auto"
-                disabled={isPending}
-              >
-                {isPending && <Spinner />}
-                Создать
-              </Button>
-            </DialogFooter>
           </FieldGroup>
         </form>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Выйти</DialogClose>
+          <Button
+            form="create-post"
+            type="submit"
+            variant="default"
+            size="sm"
+            disabled={isPending}
+          >
+            {isPending && <Spinner />}
+            Создать
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

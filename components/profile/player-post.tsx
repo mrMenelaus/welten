@@ -10,14 +10,16 @@ import {
   CardTitle,
 } from "../ui/card";
 import Link from "next/link";
-import { SendView } from "../post/send-view";
 import { PostGallery } from "../post/post-gallery";
 import { PostControls } from "../post/post-controls";
 import { Post } from "./get-player";
-import { Like } from "../like/like";
 import { Suspense } from "react";
+import { cacheTag } from "next/cache";
 
 export function PlayerPost({ post }: { post: Post }) {
+  "use cache"
+  cacheTag(`post-${post.id}`)
+
   return (
     <Card size="sm">
       <CardHeader>
@@ -30,20 +32,20 @@ export function PlayerPost({ post }: { post: Post }) {
         </CardAction>
       </CardHeader>
       <CardContent className="flex-1">
-        <SendView postId={post.id} />
+        {/* <SendView postId={post.id} isViewed={post.isViewed} /> */}
         <p className="leading-7 not-first:mt-6 line-clamp-5 whitespace-pre-wrap mb-4">
           {post.content}
         </p>
         <PostGallery images={post.images} />
       </CardContent>
       <CardFooter>
-        <Like
+        {/* <Like
           isLiked={post.isLiked}
           count={post._count.likes}
           entityId={post.id}
           type="post"
           size="sm"
-        />
+        /> */}
         <Button
           variant="outline"
           nativeButton={false}

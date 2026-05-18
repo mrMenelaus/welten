@@ -4,11 +4,14 @@ import { getSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
 import z from "zod";
 import { transferSchema } from "./types";
+import { refresh } from "next/cache";
 
 export async function transfer(
   data: z.infer<typeof transferSchema>,
-  key: string,
+  // key: string,
 ) {
+  console.log("error");
+  
   const session = await getSession();
   if (!session) return { success: false };
   const player = await prisma.player.findUnique({ where: { id: session.sub } });
@@ -17,10 +20,6 @@ export async function transfer(
   const parsed = transferSchema.safeParse(data);
 
   if (parsed.error) {
-    return { success: false };
-  }
-
-  if (!parsed.data.target) {
     return { success: false };
   }
 
@@ -47,5 +46,6 @@ export async function transfer(
     }),
   ]);
 
+  refresh()
   return { success: true };
 }

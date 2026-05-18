@@ -2,7 +2,7 @@
 
 import { useAuth } from "../auth/auth-provider";
 
-import { Trash2Icon } from "lucide-react";
+import { EllipsisVertical, Pen, Trash, Trash2Icon } from "lucide-react";
 
 import {
   AlertDialog,
@@ -14,22 +14,64 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { deletePost } from "../profile/post-actions";
 import { Post } from "@/lib/generated/prisma/client";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export function PostControls({ post }: { post: Post }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const session = useAuth();
 
-  if (session?.sub !== post.authorId) return null;
-
   return (
-    <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="destructive" size="xs" />}>
-        Удалить
-      </AlertDialogTrigger>
+    post.authorId === session?.sub && (
+      <>
+        <DeletePost open={deleteOpen} setOpen={setDeleteOpen} post={post.id} />
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={<Button variant="outline" size="icon-sm" />}
+          >
+            <EllipsisVertical />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                <Pen /> Редактировать
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <Trash /> Удалить
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </>
+    )
+  );
+}
+
+function DeletePost({
+  open,
+  setOpen,
+  post,
+}: {
+  post: string;
+  open: boolean;
+  setOpen: (value: boolean) => void;
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
@@ -44,7 +86,7 @@ export function PostControls({ post }: { post: Post }) {
           <AlertDialogCancel variant="outline">Выйти</AlertDialogCancel>
 
           <AlertDialogAction
-            onClick={() => deletePost(post.id)}
+            onClick={() => deletePost(post)}
             variant="destructive"
           >
             Удалить

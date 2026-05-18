@@ -34,12 +34,14 @@ model Player {
 
   likes Like[]
 
-  views View[]
+  views        View[]
+  achievements Achievement[]
 
-  skin       String @default("https://nmsr.nickac.dev/bust/alex")
-  
-  accent String @default("oklch(44.4% 0.177 26.899)")
-  background String @default("oklch(26.9% 0 0)")
+  skin String @default("https://nmsr.nickac.dev/bust/alex")
+
+  colors     Color[]
+  accent     String  @default("oklch(44.4% 0.177 26.899)")
+  background String  @default("oklch(26.9% 0 0)")
 
   @@index([name])
 }
@@ -53,6 +55,12 @@ model Role {
 enum Status {
   ONLINE
   OFFLINE
+}
+
+model Color {
+  id      String   @id @default(cuid())
+  value   String   @unique
+  players Player[]
 }
 
 model Friendship {
@@ -101,9 +109,8 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  // :point_down: кто написал
-  author   Player @relation(fields: [authorId], references: [id])
-  authorId String
+  author   Player? @relation(fields: [authorId], references: [id])
+  authorId String?
 
   images Image[]
 
@@ -135,12 +142,21 @@ model View {
 }
 
 model Image {
-  id     String @id @default(cuid())
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String
+  id String @id @default(cuid())
+
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?
+
+  record   Record? @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  recordId String?
+
+  donate      Donate?
+  achievement Achievement?
 
   ufsUrl String
   name   String
+  key    String
+  size    Int
 }
 
 model Transfer {
@@ -164,8 +180,11 @@ model Donate {
   param       String @unique
   name        String
   description String
+  content     String @default("")
   cost        String @default("100.00")
-  background  String @default("https://nxq44gfls2.ufs.sh/f/DO8NPlKTQEfVM4Zpv6k0RaFld893AgyTWrQXH4n6txC1SKjG")
+
+  image   Image  @relation(fields: [imageId], references: [id])
+  imageId String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -179,4 +198,24 @@ model Purchase {
 
   donate   Donate @relation(fields: [donateId], references: [id])
   donateId String
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  name        String
+  description String
+
+  image   Image  @relation(fields: [imageId], references: [id])
+  imageId String @unique
+
+  players Player[]
+}
+
+model Record {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  images Image[]
 }

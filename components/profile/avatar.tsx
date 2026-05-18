@@ -13,10 +13,7 @@ export async function Avatar({
   return (
     <Link href={`/player/${player.name}`}>
       <div
-        style={{
-          background: `linear-gradient(120deg, rgb(${player.accent}), rgb(${player.background}))`,
-        }}
-        className={cn("overflow-clip relative", className)}
+        className={cn("overflow-clip relative bg-linear-to-br from-primary/25 to-45% to-background", className)}
       >
         <Image className="-scale-x-100" fill src={player.skin} alt="avatar" />
       </div>

@@ -12,7 +12,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
-import { leaveComment } from "./comment-actions";
+import { createComment } from "./comment-actions";
 import { Spinner } from "../ui/spinner";
 import { commentSchema } from "../profile/types";
 
@@ -34,7 +34,7 @@ export function CommentForm({
 
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
-      await leaveComment(type, entityId, data);
+      await createComment(type, entityId, data);
       form.reset();
     });
   });
@@ -62,7 +62,7 @@ export function CommentForm({
                 </InputGroupText>
                 <InputGroupButton
                   type="submit"
-                  variant="outline"
+                  variant="default"
                   size="sm"
                   className="ml-auto"
                   disabled={isPending}

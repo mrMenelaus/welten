@@ -1,11 +1,10 @@
 "use client";
 
-import { Donate, Image } from "@/lib/generated/prisma/client";
+import { Image as ImageType, Record } from "@/lib/generated/prisma/client";
 import {
   Item,
   ItemActions,
   ItemContent,
-  ItemDescription,
   ItemGroup,
   ItemTitle,
 } from "../ui/item";
@@ -25,7 +24,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "../ui/field";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
   Dispatch,
@@ -37,12 +35,11 @@ import {
 } from "react";
 import { Spinner } from "../ui/spinner";
 import {
-  createDonate,
-  deleteDonate as serverDeleteDonate,
-  editDonate as serverEditDonate,
+  createRecord,
+  editRecord as serverEditRecord,
+  deleteRecord as serverDeleteRecord,
 } from "./actions";
-import { z } from "zod";
-import { createDonateSchema } from "./types";
+import { createRecordSchema } from "./types";
 import { Textarea } from "../ui/textarea";
 import {
   DropdownMenu,
@@ -74,34 +71,33 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "../ui/empty";
 import { MultiUploader } from "@/lib/upload-button";
 
-type ExpandedDonate = Donate & { image: Image };
+type ExpandedRecord = Record & {
+  images: ImageType[];
+};
 
-export function AdminPanel({ donates }: { donates: ExpandedDonate[] }) {
-  const [state, setState] = useOptimistic(donates);
+export function RecordPanel({ records }: { records: ExpandedRecord[] }) {
+  const [state, setState] = useOptimistic(records);
 
   return (
     <div className="space-y-4">
-      <CreateDonate setState={setState} />
+      <CreateRecord setState={setState} />
       <Card>
         <CardHeader>
-          <CardTitle>Все донаты</CardTitle>
+          <CardTitle>Все записи</CardTitle>
         </CardHeader>
         <CardContent>
           <ItemGroup>
             {state.length ? (
-              state.map((donate) => (
-                <Item key={donate.id} variant="outline">
+              state.map((record) => (
+                <Item key={record.id} variant="outline">
                   <ItemContent>
-                    <ItemTitle>{donate.name}</ItemTitle>
-                    <ItemDescription>
-                      Страница: <code>{`/donate/${donate.param}`}</code>
-                    </ItemDescription>
+                    <ItemTitle>{record.createdAt.toDateString()}</ItemTitle>
                   </ItemContent>
                   <ItemActions>
-                    {(donate as { optimistic?: boolean }).optimistic ? (
+                    {(record as { optimistic?: boolean }).optimistic ? (
                       <Spinner />
                     ) : (
-                      <DonateActions setState={setState} donate={donate} />
+                      <RecordActions setState={setState} record={record} />
                     )}
                   </ItemActions>
                 </Item>
@@ -121,35 +117,33 @@ export function AdminPanel({ donates }: { donates: ExpandedDonate[] }) {
   );
 }
 
-function DonateActions({
+function RecordActions({
   setState,
-  donate,
+  record,
 }: {
-  setState: Dispatch<SetStateAction<ExpandedDonate[]>>;
-  donate: ExpandedDonate;
+  setState: Dispatch<SetStateAction<ExpandedRecord[]>>;
+  record: ExpandedRecord;
 }) {
-  const { control, handleSubmit } = useForm<z.infer<typeof createDonateSchema>>(
-    {
-      values: { ...donate, images: [donate.image] },
-      resolver: zodResolver(createDonateSchema),
-    },
-  );
+  const { control, handleSubmit } = useForm({
+    values: record,
+    resolver: zodResolver(createRecordSchema),
+  });
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
-  const deleteDonate = () =>
+  const deleteRecord = () =>
     startTransition(async () => {
-      setState((prev) => prev.filter((e) => e.id !== donate.id));
-      await serverDeleteDonate(donate.id);
+      setState((prev) => prev.filter((e) => e.id !== record.id));
+      await serverDeleteRecord(record.id);
     });
 
   const onSubmit = handleSubmit((data) =>
     startTransition(async () => {
-      setState((prev) =>
-        prev.map((e) => (e.id === donate.id ? { ...e, ...data } : e)),
-      );
-      await serverEditDonate(donate.id, data);
+      // setState((prev) =>
+      //   prev.map((e) => (e.id === record.id ? { ...e, ...data } : e)),
+      // );
+      await serverEditRecord(record.id, data);
     }),
   );
 
@@ -168,7 +162,7 @@ function DonateActions({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel variant="outline">Выйти</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={deleteDonate}>
+            <AlertDialogAction variant="destructive" onClick={deleteRecord}>
               Удалить
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -176,13 +170,12 @@ function DonateActions({
       </AlertDialog>
 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="w-7xl">
           <DialogHeader>
             <DialogTitle>Изменить донат</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={onSubmit}
-            id={`edit-donate-${donate.id}`}
             className="no-scrollbar max-h-[50vh] overflow-y-auto"
           >
             <FieldGroup>
@@ -192,62 +185,9 @@ function DonateActions({
                 render={({ field }) => (
                   <MultiUploader
                     endpoint="imageUploader"
-                    setUploaded={field.onChange}
                     uploaded={field.value}
+                    setUploaded={field.onChange}
                   />
-                )}
-              />
-              <Controller
-                control={control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor="username">Название доната</FieldLabel>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Deluxe"
-                      {...field}
-                    />
-                    <FieldError errors={[fieldState.error]} />
-                  </Field>
-                )}
-              />
-              <Controller
-                control={control}
-                name="param"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor="param">Страница</FieldLabel>
-                    <Input
-                      id="param"
-                      type="text"
-                      placeholder="deluxe"
-                      {...field}
-                    />
-                    <FieldDescription>
-                      Используется в URL страницы /donate/страница
-                    </FieldDescription>
-                    <FieldError errors={[fieldState.error]} />
-                  </Field>
-                )}
-              />
-              <Controller
-                control={control}
-                name="description"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor="description">Описание</FieldLabel>
-                    <Textarea
-                      {...field}
-                      id="description"
-                      placeholder="Базовый уровень поддержки"
-                    />
-                    <FieldDescription>
-                      Короткое описание доната
-                    </FieldDescription>
-                    <FieldError errors={[fieldState.error]} />
-                  </Field>
                 )}
               />
               <Controller
@@ -274,11 +214,7 @@ function DonateActions({
             <DialogClose render={<Button variant="secondary" />}>
               Закрыть
             </DialogClose>
-            <DialogClose
-              type="submit"
-              form={`edit-donate-${donate.id}`}
-              render={<Button variant="default" />}
-            >
+            <DialogClose type="submit" render={<Button variant="default" />}>
               Сохранить
             </DialogClose>
           </DialogFooter>
@@ -309,48 +245,35 @@ function DonateActions({
   );
 }
 
-function CreateDonate({
+function CreateRecord({
   setState,
 }: {
-  setState: Dispatch<SetStateAction<ExpandedDonate[]>>;
+  setState: Dispatch<SetStateAction<ExpandedRecord[]>>;
 }) {
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
-      description: "",
-      name: "",
-      param: "",
-      images: [],
       content: "",
-      cost: "100.00",
+      images: [],
     },
-    resolver: zodResolver(createDonateSchema),
+    resolver: zodResolver(createRecordSchema),
   });
 
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = handleSubmit((data) => {
     startTransition(async () => {
-      const id = Date.now().toString();
-      const date = new Date(Date.now());
-
       setState((prev) => [
         {
           ...data,
-          id,
-          image: {
-            ...data.images[0],
-            id,
-            postId: null,
-            recordId: null,
-          },
-          imageId: id,
-          createdAt: date,
-          updatedAt: date,
+          images: [],
+          id: Date.now().toString(),
+          createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
           optimistic: true,
         },
         ...prev,
       ]);
-      await createDonate(data);
+      await createRecord(data);
       reset();
     });
   });
@@ -358,71 +281,20 @@ function CreateDonate({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Добавить донат</CardTitle>
+        <CardTitle>Добавить запись</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} id="create-donate">
+        <form onSubmit={onSubmit} id="create-record">
           <FieldGroup>
             <Controller
-              name="images"
               control={control}
+              name="images"
               render={({ field }) => (
                 <MultiUploader
                   endpoint="imageUploader"
                   uploaded={field.value}
                   setUploaded={field.onChange}
                 />
-              )}
-            />
-            <Controller
-              control={control}
-              name="name"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="username">Название доната</FieldLabel>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Deluxe"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
-            />
-            <Controller
-              control={control}
-              name="param"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="param">Страница</FieldLabel>
-                  <Input
-                    id="param"
-                    type="text"
-                    placeholder="deluxe"
-                    {...field}
-                  />
-                  <FieldDescription>
-                    Используется в URL страницы /donate/страница
-                  </FieldDescription>
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
-            />
-            <Controller
-              control={control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="description">Описание</FieldLabel>
-                  <Textarea
-                    {...field}
-                    id="description"
-                    placeholder="Базовый уровень поддержки"
-                  />
-                  <FieldDescription>Короткое описание доната</FieldDescription>
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
               )}
             />
             <Controller
@@ -434,7 +306,7 @@ function CreateDonate({
                   <Textarea
                     {...field}
                     id="content"
-                    placeholder="# Преимущества"
+                    placeholder="# Новый пост"
                   />
                   <FieldDescription>
                     Вы можете использовать markdown
@@ -448,7 +320,7 @@ function CreateDonate({
       </CardContent>
       <CardFooter>
         <Button
-          form="create-donate"
+          form="create-record"
           type="submit"
           variant="outline"
           disabled={isPending}

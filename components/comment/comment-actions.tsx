@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { refresh } from "next/cache";
 import { commentSchema } from "../profile/types";
 
-export async function leaveComment(
+export async function createComment(
   type: "post" | "player",
   entityId: string,
   data: z.input<typeof commentSchema>,

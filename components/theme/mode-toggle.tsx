@@ -1,22 +1,17 @@
-"use client";
-import { Palette } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { Palette } from "./palette";
+import { getSession } from "@/lib/auth/get-session";
+import { prisma } from "@/lib/prisma";
 
-export function ModeToggle() {
-  const { setTheme, themes, theme } = useTheme();
+export async function ModeToggle() {
 
-  function toggleTheme() {
-    if (theme) {
-      const index = themes.indexOf(theme);
-      return setTheme(themes[(index + 1) % themes.length]);
-    }
-    setTheme(themes[0]);
-  }
+  const session = await getSession()
+  if (!session) return null
+  
+  const player = await prisma.player.findUnique({where: {id: session.sub}, include: {colors: true}})
+  if (!player) return null
+
 
   return (
-    <Button variant="outline" onClick={toggleTheme} size="icon-lg">
-      <Palette />
-    </Button>
+      <Palette colors={player.colors} accent={player.accent} background={player.background}  />
   );
 }

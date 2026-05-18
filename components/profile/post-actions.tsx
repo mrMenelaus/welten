@@ -6,7 +6,7 @@ import { getSession } from "@/lib/auth/get-session";
 import { prisma } from "@/lib/prisma";
 import { refresh } from "next/cache";
 
-export async function leavePost(data: z.input<typeof postSchema>) {
+export async function createPost(data: z.input<typeof postSchema>) {
   const session = await getSession();
   if (!session) return "error";
 

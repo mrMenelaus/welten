@@ -5,11 +5,14 @@ import { cn } from "@/lib/utils";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { getSession } from "@/lib/auth/get-session";
 import { AuthProvider } from "@/components/auth/auth-provider";
-import { Suspense } from "react";
+import { CSSProperties, Suspense } from "react";
+import { Toaster } from "@/components/ui/sonner";
+import { Badge } from "@/components/ui/badge";
+import { Rocket } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -48,33 +51,43 @@ export default function RootLayout({
         figtree.variable,
       )}
     >
-      <body style={
-        {
-          "--profile-dark": "159 7 18",
-          "--profile-light": "193 0 7",
-        } as React.CSSProperties}>
+      <body
+        className="dark"
+        style={{ "--custom": "color-mix(in oklab, var(--primary) 25%, transparent)" } as CSSProperties}
+      >
         <AuthProvider authPromise={authPromise}>
-          <ThemeProvider attribute="class">
-            <SidebarProvider>
-              <Suspense>
-                <AppSidebar />
-              </Suspense>
-              <div className="min-h-full flex flex-col flex-1">
-                <nav>
-                  <div className="container mx-auto p-4 flex gap-2 items-center">
-                    <SidebarTrigger />
-                    <div className="flex-1" />
+          <SidebarProvider>
+            <Suspense>
+              <AppSidebar />
+            </Suspense>
+            <div className="min-h-full flex flex-col flex-1">
+              <nav>
+                <div className="container mx-auto p-4 flex gap-2 items-center">
+                  <SidebarTrigger />
+                  <div className="flex-1" />
+                  <Suspense fallback={<Skeleton className="size-8" />}>
                     <ModeToggle />
-                  </div>
-                </nav>
-                <Separator />
-                <main className="flex-1 flex flex-col">
-                  <div className="container mx-auto p-4 flex-1">{children}</div>
-                </main>
-              </div>
-            </SidebarProvider>
-          </ThemeProvider>
+                  </Suspense>
+                </div>
+              </nav>
+              <Separator />
+              <main className="flex-1 flex flex-col">
+                <div className="container mx-auto p-4 flex-1">{children}</div>
+              </main>
+              <Separator />
+              <footer>
+                <div className="container mx-auto p-4 flex gap-2 items-center">
+                  <div className="flex-1" />
+                  <Badge variant="secondary">
+                    {" "}
+                    <Rocket /> Powered by Menelaus
+                  </Badge>
+                </div>
+              </footer>
+            </div>
+          </SidebarProvider>
         </AuthProvider>
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );

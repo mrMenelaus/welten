@@ -8,15 +8,11 @@ const emitter = new EventEmitter();
 export async function getPalette(imageUrl: string) {
   try {
     const palette = await Vibrant.from(imageUrl).getPalette();
-    return {
-      background: palette.DarkMuted?.rgb.join(" ") ?? "oklch(26.9% 0 0)",
-      accent: palette.DarkVibrant?.rgb.join(" ") ?? "oklch(20.8% 0.042 265.755)",
-    };
+    return Object.values(palette)
+      .map((e) => e?.rgb.join(" "))
+      .filter(Boolean) as string[];
   } catch {
-    return {
-      background: "oklch(26.9% 0 0)",
-      accent: "oklch(20.8% 0.042 265.755)",
-    };
+    return [];
   }
 }
 
@@ -53,31 +49,39 @@ export async function POST(req: Request) {
   const roles = parsed.data.nodes.map((node) => ({ value: node }));
 
   const src = `https://nmsr.nickac.dev/bust/${parsed.data.skin.textures.SKIN.url.split("/").at(-1)}?${parsed.data.skin.textures.SKIN.metadata.model === "default" ? "steve" : "alex"}`;
-  
-  console.log(src);
-  
-  const palette = await getPalette(parsed.data.skin.textures.SKIN.url);
 
+  console.log(src);
+
+  const palette = await getPalette(parsed.data.skin.textures.SKIN.url);
+  const paletteDto = palette.map((color) => ({ value: color }));
   // const {nodes} = parsed.data;
 
   await prisma.role.createMany({ skipDuplicates: true, data: roles });
+  await prisma.color.createMany({
+    skipDuplicates: true,
+    data: paletteDto,
+  });
 
   await prisma.player.upsert({
     create: {
       status: parsed.data.status,
       name: parsed.data.name,
       skin: src,
-      ...palette,
       roles: {
         connect: roles,
+      },
+      colors: {
+        connect: paletteDto,
       },
     },
     update: {
       skin: src,
-      ...palette,
       status: parsed.data.status,
       roles: {
         set: roles,
+      },
+      colors: {
+        set: paletteDto,
       },
     },
     where: { name: parsed.data.name },

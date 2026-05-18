@@ -8,7 +8,7 @@ export function PostGallery({ images }: { images: ImageType[] }) {
 
   return (
     <div
-      className={cn("grid aspect-4/3 gap-2", {
+      className={cn("w-full grid aspect-4/3 gap-2", {
         "grid-cols-2": images.length === 2,
         "grid-cols-3": images.length > 2,
       })}

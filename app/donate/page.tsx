@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -10,11 +10,10 @@ import { Metadata } from "next";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "ДОНАТ",
+  title: "Донат",
 };
 
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { cacheLife } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
@@ -22,38 +21,36 @@ export default async function Donate() {
   "use cache";
   cacheLife("minutes");
 
-  const donates = await prisma.donate.findMany()
+  const donates = await prisma.donate.findMany({ include: { image: true } });
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 ">
       {donates.map((e) => (
-        <Card key={e.id} className="relative overflow-clip aspect-3/4 group">
-          <div className="absolute inset-0 z-0">
+        <Card className="group pt-0" key={e.id}>
+          <div className="relative aspect-square w-full overflow-clip">
             <Image
-            className="object-cover"
-              src={e.background}
+              src={e.image.ufsUrl}
+              alt={e.image.name}
               fill
-              alt="background"
+              className="object-cover group-hover:scale-105 ease-out duration-500"
             />
           </div>
-          <div className="flex-1" />
-          <CardHeader className="z-50">
-            <CardTitle className="leading-1.5 font-black text-4xl">
-              {e.name}
-            </CardTitle>
-            <CardDescription className="font-semibold text-4xl">
-              {e.cost} &#8381;
+          <CardHeader>
+            <CardTitle>{e.name}</CardTitle>
+            <CardDescription className="line-clamp-2">
+              {e.description}
             </CardDescription>
           </CardHeader>
-          <CardFooter className="z-50">
-            <Button
-              nativeButton={false}
-              className="w-full"
-              variant="outline"
-              render={<Link href={`/donate/${e.param}`} />}
+          <CardFooter>
+            <Link
+              className={buttonVariants({
+                variant: "secondary",
+                className: "w-full",
+              })}
+              href={`/donate/${e.param}`}
             >
-              Подробнее <ChevronRight />
-            </Button>
+              Подробности
+            </Link>
           </CardFooter>
         </Card>
       ))}

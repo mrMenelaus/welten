@@ -10,7 +10,11 @@ export const getPlayer = cache(async (name: string) => {
   const player = await prisma.player.findUnique({
     where: { name },
     include: {
+      achievements: {
+        include: { image: true, _count: { select: { players: true } } },
+      },
       roles: true,
+      colors: true,
       playerComments: {
         orderBy: { createdAt: "desc" },
         include: {
@@ -61,8 +65,10 @@ export const getPlayer = cache(async (name: string) => {
   };
 });
 
-export type MappedPlayer = NonNullable<Awaited<ReturnType<typeof getPlayer>>>
+export type MappedPlayer = NonNullable<Awaited<ReturnType<typeof getPlayer>>>;
 
-export type Post = MappedPlayer["posts"][number]
-export type Comment = MappedPlayer["comments"][number]
+export type Achievement = MappedPlayer["achievements"][number];
+export type Post = MappedPlayer["posts"][number];
+export type Comment = MappedPlayer["comments"][number];
 
+export const getPlayersCount = cache(() => prisma.player.count());

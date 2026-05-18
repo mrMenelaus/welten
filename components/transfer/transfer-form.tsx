@@ -15,9 +15,8 @@ import { Button } from "@/components/ui/button";
 import { transferSchema } from "./types";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
 import { transfer } from "./transfer-actions";
-import { useRef, useState } from "react";
+import { useRef, useTransition } from "react";
 import { Spinner } from "../ui/spinner";
 import {
   Combobox,
@@ -37,7 +36,7 @@ export function TransferForm({
 }) {
   const keyRef = useRef<null | string>(null);
 
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   function getKey() {
     if (keyRef.current) {
@@ -54,17 +53,11 @@ export function TransferForm({
     mode: "onChange",
   });
 
-  // eslint-disable-next-line react-hooks/refs
-  const onSubmit = form.handleSubmit(async (data) => {
-    setIsPending(true);
-    const key = getKey();
-    const result = await transfer(data, key);
-    if (result.success) {
-      keyRef.current = null;
-      form.reset();
-    }
-    setIsPending(false);
-  });
+  const onSubmit = form.handleSubmit((data) =>
+    startTransition(async () => {
+      await transfer(data);
+    }),
+  );
 
   return (
     <form onSubmit={onSubmit}>
@@ -133,7 +126,7 @@ export function TransferForm({
             </Field>
           )}
         />
-        <Button disabled={isPending}>
+        <Button disabled={isPending} type="submit">
           {isPending && <Spinner />} Перевести
         </Button>
       </FieldGroup>

@@ -58,7 +58,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="bg-linear-120 from-(--custom) to-sidebar">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
