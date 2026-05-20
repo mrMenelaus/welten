@@ -27,6 +27,7 @@ import {
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
 import { MultiUploader } from "@/lib/upload-button";
+import { toast } from "sonner";
 
 export function CreatePost() {
   const [open, setOpen] = useState(false);
@@ -42,9 +43,14 @@ export function CreatePost() {
 
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
-      await createPost(data);
-      setOpen(false);
-      form.reset();
+      const result = await createPost(data);
+      if (result.success) {
+        toast.success(result.message);
+        setOpen(false);
+        form.reset();
+      } else {
+        toast.error(result.message);
+      }
     });
   });
 
@@ -81,12 +87,12 @@ export function CreatePost() {
               name="content"
               render={({ fieldState, field }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="block-end-textarea">
+                  <FieldLabel htmlFor="content">
                     Текст поста
                   </FieldLabel>
                   <InputGroup>
                     <InputGroupTextarea
-                      id="block-end-textarea"
+                      id="content"
                       placeholder="Я тебя люблю..."
                       {...field}
                       aria-invalid={fieldState.invalid}

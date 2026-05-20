@@ -9,7 +9,7 @@ export async function getPalette(imageUrl: string) {
   try {
     const palette = await Vibrant.from(imageUrl).getPalette();
     return Object.values(palette)
-      .map((e) => e?.rgb.join(" "))
+      .map((e) => e?.hex)
       .filter(Boolean) as string[];
   } catch {
     return [];
@@ -67,6 +67,9 @@ export async function POST(req: Request) {
       status: parsed.data.status,
       name: parsed.data.name,
       skin: src,
+      texture: parsed.data.skin.textures.SKIN.url,
+      opacity: "10%",
+      accent: palette[0],
       roles: {
         connect: roles,
       },
@@ -75,6 +78,7 @@ export async function POST(req: Request) {
       },
     },
     update: {
+      texture: parsed.data.skin.textures.SKIN.url,
       skin: src,
       status: parsed.data.status,
       roles: {

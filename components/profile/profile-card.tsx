@@ -15,14 +15,25 @@ import { Suspense } from "react";
 import { AchievementWrapper } from "../admin/achievement-wrapper";
 import ShowMore from "../layout/show-more";
 import { Achievement } from "../admin/achievement";
+import { getTagHelper } from "@/lib/get-tag-helper";
+import { prisma } from "@/lib/prisma";
+import { cacheTag } from "next/cache";
 
-export async function ProfileCard({ player }: { player: MappedPlayer }) {
+const getTag = getTagHelper("player")
+
+export async function ProfileCard({ name }: { name: string }) {
+  "use cache"
+  cacheTag(getTag(name))
+
+  const player = await prisma.player.findUnique({where: {name}, include: {roles: true, playerComments: {include: {author: true, likes: {select: {authorId: true}}}}, achievements: {include: {image: true, _count: {select: {players: true}}}}}})
+  if (!player) return null
+  
   return (
     <Animated
       initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0.3, 1, 0.8, 1] }}
       transition={{
-        duration: 0.8,
+        duration: 6,
         ease: "easeInOut",
         times: [0, 0.2, 0.4, 0.7, 1],
       }}
@@ -59,12 +70,12 @@ export async function ProfileCard({ player }: { player: MappedPlayer }) {
               <Achievement achievement={e} key={e.id} />
             ))}
           </ShowMore>
-          <Suspense>
-            <AchievementWrapper player={player} />
-          </Suspense>
+          {/* <Suspense>
+            <AchievementWrapper player={player as MappedPlayer} />
+          </Suspense> */}
         </CardContent>
         <CardFooter className="block">
-          <ProfileComments player={player} />
+          <ProfileComments id={player.id} comments={player.playerComments} />
         </CardFooter>
       </Card>
     </Animated>

@@ -12,19 +12,19 @@ import {
 import Link from "next/link";
 import { PostGallery } from "../post/post-gallery";
 import { PostControls } from "../post/post-controls";
-import { Post } from "./get-player";
 import { Suspense } from "react";
-import { cacheTag } from "next/cache";
+import { SendView } from "../post/send-view";
+import { Like } from "../like/like";
+import { Post } from "@/lib/generated/prisma/client";
 
 export function PlayerPost({ post }: { post: Post }) {
-  "use cache"
-  cacheTag(`post-${post.id}`)
-
   return (
     <Card size="sm">
       <CardHeader>
         <CardTitle>{post.createdAt.toLocaleDateString()}</CardTitle>
-        <CardDescription>{post._count.views} просмотров</CardDescription>
+        <CardDescription>
+          {/* {post._count.views} */}
+          10 просмотров</CardDescription>
         <CardAction>
           <Suspense>
             <PostControls post={post} />
@@ -36,7 +36,7 @@ export function PlayerPost({ post }: { post: Post }) {
         <p className="leading-7 not-first:mt-6 line-clamp-5 whitespace-pre-wrap mb-4">
           {post.content}
         </p>
-        <PostGallery images={post.images} />
+        {/* <PostGallery images={post.images} /> */}
       </CardContent>
       <CardFooter>
         {/* <Like
@@ -52,7 +52,8 @@ export function PlayerPost({ post }: { post: Post }) {
           render={<Link href={`/post/${post.id}`} />}
         >
           <MessageCircleCheck />
-          {post._count.comments}
+          10
+          {/* {post._count.comments} */}
         </Button>
       </CardFooter>
     </Card>

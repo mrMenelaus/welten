@@ -1,5 +1,4 @@
 import { getSession } from "@/lib/auth/get-session";
-import { Achievement } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { AchievementActions } from "./achievement-actions";
 import { MappedPlayer } from "../profile/get-player";

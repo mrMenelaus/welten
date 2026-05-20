@@ -73,8 +73,11 @@ import {
 } from "../ui/dialog";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "../ui/empty";
 import { MultiUploader } from "@/lib/upload-button";
+import { getTagHelper } from "@/lib/get-tag-helper";
 
 type ExpandedDonate = Donate & { image: Image };
+
+const getId = getTagHelper("donate", "edit");
 
 export function AdminPanel({ donates }: { donates: ExpandedDonate[] }) {
   const [state, setState] = useOptimistic(donates);
@@ -182,7 +185,7 @@ function DonateActions({
           </DialogHeader>
           <form
             onSubmit={onSubmit}
-            id={`edit-donate-${donate.id}`}
+            id={getId(donate.id)}
             className="no-scrollbar max-h-[50vh] overflow-y-auto"
           >
             <FieldGroup>
@@ -202,9 +205,11 @@ function DonateActions({
                 name="name"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="username">Название доната</FieldLabel>
+                    <FieldLabel htmlFor={getId(donate.id, field.name)}>
+                      Название доната
+                    </FieldLabel>
                     <Input
-                      id="username"
+                      id={getId(donate.id, field.name)}
                       type="text"
                       placeholder="Deluxe"
                       {...field}
@@ -218,9 +223,11 @@ function DonateActions({
                 name="param"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="param">Страница</FieldLabel>
+                    <FieldLabel htmlFor={getId(donate.id, field.name)}>
+                      Страница
+                    </FieldLabel>
                     <Input
-                      id="param"
+                      id={getId(donate.id, field.name)}
                       type="text"
                       placeholder="deluxe"
                       {...field}
@@ -237,10 +244,12 @@ function DonateActions({
                 name="description"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="description">Описание</FieldLabel>
+                    <FieldLabel htmlFor={getId(donate.id, field.name)}>
+                      Описание
+                    </FieldLabel>
                     <Textarea
                       {...field}
-                      id="description"
+                      id={getId(donate.id, field.name)}
                       placeholder="Базовый уровень поддержки"
                     />
                     <FieldDescription>
@@ -255,10 +264,12 @@ function DonateActions({
                 name="content"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="content">Содержание</FieldLabel>
+                    <FieldLabel htmlFor={getId(donate.id, field.name)}>
+                      Содержание
+                    </FieldLabel>
                     <Textarea
                       {...field}
-                      id="content"
+                      id={getId(donate.id, field.name)}
                       placeholder="# Преимущества"
                     />
                     <FieldDescription>
@@ -276,7 +287,7 @@ function DonateActions({
             </DialogClose>
             <DialogClose
               type="submit"
-              form={`edit-donate-${donate.id}`}
+              form={getId(donate.id)}
               render={<Button variant="default" />}
             >
               Сохранить

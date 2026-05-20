@@ -1,4 +1,3 @@
-import { Comment as CommentType } from "../profile/get-player";
 import {
   Item,
   ItemActions,
@@ -11,8 +10,9 @@ import {
 import { Avatar } from "../profile/avatar";
 import { Suspense } from "react";
 import { CommentControls } from "./comment-controls";
+import { Comment as CommentType, Player } from "@/lib/generated/prisma/client";
 
-export function Comment({ comment }: { comment: CommentType }) {
+export function Comment({ comment }: { comment: CommentType & {author: Player, likes: {authorId: string}[]} }) {
   return (
     <Item variant="outline" size="xs">
       <ItemMedia>

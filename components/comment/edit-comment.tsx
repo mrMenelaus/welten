@@ -26,6 +26,10 @@ import { Spinner } from "../ui/spinner";
 import { commentSchema } from "../profile/types";
 import { editComment } from "./comment-actions";
 import { Comment } from "@/lib/generated/prisma/client";
+import { getTagHelper } from "@/lib/get-tag-helper";
+import { toast } from "sonner";
+
+const getId = getTagHelper("comment", "edit");
 
 export function EditComment({
   comment,
@@ -47,7 +51,12 @@ export function EditComment({
 
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
-      await editComment(comment.id, data);
+      const result = await editComment(comment.id, data);
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
     });
   });
 
@@ -57,19 +66,19 @@ export function EditComment({
         <DialogHeader>
           <DialogTitle>Изменить комментарий</DialogTitle>
         </DialogHeader>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} id={getId(comment.id)}>
           <FieldGroup>
             <Controller
               control={form.control}
               name="content"
               render={({ fieldState, field }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="block-end-textarea">
+                  <FieldLabel htmlFor={getId(comment.id, field.name)}>
                     Текст комментария
                   </FieldLabel>
                   <InputGroup>
                     <InputGroupTextarea
-                      id="block-end-textarea"
+                      id={getId(comment.id, field.name)}
                       placeholder="Я тебя люблю..."
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -87,27 +96,20 @@ export function EditComment({
               )}
             />
           </FieldGroup>
-
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
-              Выйти
-            </DialogClose>
-            <DialogClose
-              render={
-                <Button
-                  type="submit"
-                  variant="default"
-                  size="sm"
-                  className="ml-auto"
-                  disabled={isPending}
-                />
-              }
-            >
-              {isPending && <Spinner />}
-              Сохранить изменения
-            </DialogClose>
-          </DialogFooter>
         </form>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Выйти</DialogClose>
+          <Button
+            form={getId(comment.id)}
+            type="submit"
+            variant="default"
+            size="sm"
+            disabled={isPending}
+          >
+            {isPending && <Spinner />}
+            Сохранить
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

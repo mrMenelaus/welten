@@ -8,8 +8,18 @@ import {
   EmptyTitle,
 } from "../ui/empty";
 import { Animated } from "../layout/animated";
+import { cacheTag } from "next/cache";
+import { getTagHelper } from "@/lib/get-tag-helper";
+import { prisma } from "@/lib/prisma";
 
-export async function PostList({ posts }: { posts: Post[] }) {
+const getTag = getTagHelper("posts")
+
+export async function PostList({ name }: { name: string }) {
+  "use cache"
+  cacheTag(getTag(name))
+
+  const posts = await prisma.post.findMany({where: {author: {name}}})
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">

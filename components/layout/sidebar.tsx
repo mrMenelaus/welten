@@ -10,8 +10,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  Bell,
-  Bookmark,
   Coins,
   Handshake,
   Home,
@@ -42,27 +40,18 @@ const navigation = [
     icon: Coins,
     name: "Донат",
   },
-  {
-    href: "#",
-    icon: Bell,
-    name: "Уведомления",
-  },
-  {
-    href: "#",
-    icon: Bookmark,
-    name: "Форумы",
-  },
 ] as const;
 
 export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon" className="bg-linear-120 from-(--custom) to-sidebar">
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
+              isActive={pathname === "/"}
               render={
                 <Link href="/">
                   <Home />

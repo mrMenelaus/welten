@@ -12,6 +12,6 @@ export async function ModeToggle() {
 
 
   return (
-      <Palette colors={player.colors} accent={player.accent} background={player.background}  />
+      <Palette colors={player.colors} accent={player.accent} opacity={player.opacity}  />
   );
 }

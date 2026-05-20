@@ -4,7 +4,6 @@ import { useAuth } from "../auth/auth-provider";
 import { EditComment } from "./edit-comment";
 import { Like } from "../like/like";
 import { DeleteComment } from "./delete-comment";
-import { Comment } from "../profile/get-player";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -15,8 +14,9 @@ import {
 } from "../ui/dropdown-menu";
 import { EllipsisVertical, Pen, Trash } from "lucide-react";
 import { Button } from "../ui/button";
+import { Comment, Player } from "@/lib/generated/prisma/client";
 
-export function CommentControls({ comment }: { comment: Comment }) {
+export function CommentControls({ comment }: { comment: Comment & {author: Player, likes: {authorId: string}[]} }) {
   const session = useAuth();
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -25,8 +25,7 @@ export function CommentControls({ comment }: { comment: Comment }) {
   return (
     <>
       <Like
-        isLiked={Boolean(comment.likes.length)}
-        count={comment._count.likes}
+        likes={comment.likes}
         entityId={comment.id}
         type="comment"
       />

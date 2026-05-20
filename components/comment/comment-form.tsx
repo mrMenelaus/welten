@@ -15,6 +15,8 @@ import { useTransition } from "react";
 import { createComment } from "./comment-actions";
 import { Spinner } from "../ui/spinner";
 import { commentSchema } from "../profile/types";
+import { toast } from "sonner";
+import { useAuth } from "../auth/auth-provider";
 
 export function CommentForm({
   entityId,
@@ -23,6 +25,8 @@ export function CommentForm({
   entityId: string;
   type: "post" | "player";
 }) {
+  const session = useAuth();
+
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -32,10 +36,18 @@ export function CommentForm({
     },
   });
 
+  if (!session) return null;
+  if (type === "player" && entityId === session.sub) return null;
+
   const onSubmit = form.handleSubmit((data) => {
     startTransition(async () => {
-      await createComment(type, entityId, data);
-      form.reset();
+      const result = await createComment(type, entityId, data);
+      if (result.success) {
+        form.reset();
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
     });
   });
 

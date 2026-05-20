@@ -37,11 +37,12 @@ model Player {
   views        View[]
   achievements Achievement[]
 
-  skin String @default("https://nmsr.nickac.dev/bust/alex")
+  skin String
+  texture String
 
   colors     Color[]
-  accent     String  @default("oklch(44.4% 0.177 26.899)")
-  background String  @default("oklch(26.9% 0 0)")
+  accent     String
+  opacity String
 
   @@index([name])
 }

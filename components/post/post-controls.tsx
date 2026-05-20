@@ -26,6 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { toast } from "sonner";
 
 export function PostControls({ post }: { post: Post }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -86,7 +87,14 @@ function DeletePost({
           <AlertDialogCancel variant="outline">Выйти</AlertDialogCancel>
 
           <AlertDialogAction
-            onClick={() => deletePost(post)}
+            onClick={async () => {
+              const result = await deletePost(post);
+              if (result.success) {
+                toast.success(result.message);
+              } else {
+                toast.error(result.message);
+              }
+            }}
             variant="destructive"
           >
             Удалить

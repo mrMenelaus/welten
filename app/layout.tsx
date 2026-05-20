@@ -53,7 +53,13 @@ export default function RootLayout({
     >
       <body
         className="dark"
-        style={{ "--custom": "color-mix(in oklab, var(--primary) 25%, transparent)" } as CSSProperties}
+        style={
+          {
+            "--opacity": "10%",
+            "--custom":
+              "color-mix(in oklab, var(--primary) var(--opacity), transparent)",
+          } as CSSProperties
+        }
       >
         <AuthProvider authPromise={authPromise}>
           <SidebarProvider>
@@ -79,7 +85,6 @@ export default function RootLayout({
                 <div className="container mx-auto p-4 flex gap-2 items-center">
                   <div className="flex-1" />
                   <Badge variant="secondary">
-                    {" "}
                     <Rocket /> Powered by Menelaus
                   </Badge>
                 </div>

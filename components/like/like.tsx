@@ -9,19 +9,20 @@ import { cn } from "@/lib/utils";
 import { useOptimistic } from "react";
 
 export function Like({
-  count,
   type,
   entityId,
-  isLiked,
+  likes,
   size = "sm",
 }: {
-  isLiked: boolean;
-  count: number;
+  likes: { authorId: string }[];
   type: Likeable;
   entityId: string;
   size?: "xs" | "sm" | "lg";
 }) {
   const session = useAuth();
+
+  const isLiked = likes.some((e) => e.authorId === session?.sub);
+  const count = likes.length;
 
   const [optimisticLikes, setOptimisticLikes] = useOptimistic({
     count,

@@ -11,13 +11,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { Comment } from "@/lib/generated/prisma/client";
 import { deleteComment } from "./comment-actions";
 import { Dispatch } from "react";
+import { toast } from "sonner";
 
 export function DeleteComment({
   comment,
@@ -44,7 +43,14 @@ export function DeleteComment({
           <AlertDialogCancel variant="outline">Выйти</AlertDialogCancel>
 
           <AlertDialogAction
-            onClick={() => deleteComment(comment.id)}
+            onClick={async () => {
+              const result = await deleteComment(comment.id);
+              if (result.success) {
+                toast.success(result.message);
+              } else {
+                toast.error(result.message);
+              }
+            }}
             variant="destructive"
           >
             Удалить

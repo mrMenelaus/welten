@@ -12,12 +12,12 @@ export async function createComment(
   data: z.input<typeof commentSchema>,
 ) {
   const session = await getSession();
-  if (!session) return "error";
+  if (!session) return {success: false, message: "Не авторизован"}
 
   const parsed = commentSchema.safeParse(data);
 
   if (parsed.error) {
-    return "error";
+    return {success: false, message: "Плохой запрос"}
   }
 
   await prisma.comment.create({
@@ -29,7 +29,7 @@ export async function createComment(
   });
 
   refresh();
-  return "success";
+  return {success: true, message: "Комментарий успешно создан"}
 }
 
 export async function view(postId: string) {
@@ -39,21 +39,23 @@ export async function view(postId: string) {
   const existing = await prisma.view.findFirst({
     where: { postId, playerId: session.sub },
   });
+
   if (existing) return;
+
   await prisma.view.create({ data: { postId, playerId: session.sub } });
 }
 
 
 export async function deleteComment(commentId: string) {
   const session = await getSession();
-  if (!session) return "error";
+  if (!session) return {success: false, message: "Не авторизован"}
 
   await prisma.comment.delete({
     where: { id: commentId, authorId: session.sub },
   });
 
   refresh();
-  return "success";
+  return {success: true, message: "Комментарий успешно удалён"}
 }
 
 export async function editComment(
@@ -61,13 +63,11 @@ export async function editComment(
   data: z.input<typeof commentSchema>,
 ) {
   const session = await getSession();
-  if (!session) return "error";
-
+  if (!session) return {success: false, message: "Не авторизован"}
+  
   const parsed = commentSchema.safeParse(data);
-
-  if (parsed.error) {
-    return "error";
-  }
+  
+  if (parsed.error) return {success: false, message: "Плохой запрос"} 
 
   await prisma.comment.update({
     where: { id: commentId },
@@ -75,5 +75,5 @@ export async function editComment(
   });
 
   refresh();
-  return "success";
+  return {success: true, message: "Комментарий успешно обновлён"}
 }

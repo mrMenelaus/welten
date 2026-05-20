@@ -8,12 +8,12 @@ import { refresh } from "next/cache";
 
 export async function createPost(data: z.input<typeof postSchema>) {
   const session = await getSession();
-  if (!session) return "error";
+  if (!session) return { success: false, message: "Не авторизован" };
 
   const parsed = postSchema.safeParse(data);
 
   if (parsed.error) {
-    return "error";
+    return { success: false, message: "Плохой запрос" };
   }
 
   await prisma.post.create({
@@ -25,12 +25,12 @@ export async function createPost(data: z.input<typeof postSchema>) {
   });
 
   refresh();
-  return "success";
+  return { success: true, message: "Пост успешно создан" };
 }
 
 export async function deletePost(postId: string) {
   const session = await getSession();
-  if (!session) return "error";
+  if (!session) return { success: false, message: "Не авторизован" };
 
   await prisma.post.delete({
     where: { id: postId, authorId: session.sub },
@@ -38,5 +38,5 @@ export async function deletePost(postId: string) {
 
   refresh();
 
-  return "success";
+  return { success: true, message: "Пост успешно удалён" };
 }

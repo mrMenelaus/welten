@@ -3,7 +3,8 @@
 import { getSession } from "@/lib/auth/get-session";
 import { Likeable } from "./types";
 import { prisma } from "@/lib/prisma";
-import { refresh } from "next/cache";
+import { refresh, revalidateTag, updateTag } from "next/cache";
+import { getTagHelper } from "@/lib/get-tag-helper";
 
 const fields = {
   comment: "commentId",
@@ -27,7 +28,6 @@ export async function like(type: Likeable, entityId: string) {
       data: { authorId: session.sub, [field]: entityId },
     });
   }
-
-  refresh();
+  
   return "success";
 }

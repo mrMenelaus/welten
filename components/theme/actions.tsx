@@ -13,12 +13,12 @@ export async function setAccent(color: string) {
   });
 }
 
-export async function setBackground(color: string) {
+export async function setOpacity(color: string) {
   const session = await getSession();
   if (!session) return;
 
   await prisma.player.update({
-    data: { background: color },
+    data: { opacity: color },
     where: { id: session.sub },
   });
 }
